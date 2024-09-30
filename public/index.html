@@ -12,8 +12,74 @@
   <div id="map" style="height: 90vh;width: 50vw; position: relative;"></div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="bundle.js"></script>
+
   <div id="info-box" style="position: absolute; top: 10px; right: 10px; width: 200px; height: auto; background: white; border: 1px solid #ccc; padding: 10px;">
     info: <span id="distance"></span>
+  </div>
+
+  <!-- Tables container -->
+  <div id="tables-container">
+    <!-- ONLINE label -->
+    <div class="table-header"><strong>ONLINE</strong></div>
+
+    <!-- First Table: 2 columns and 8 rows -->
+    <table id="table1">
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+    </table>
+
+    <!-- OFFLINE label -->
+    <div class="table-header"><strong>OFFLINE</strong></div>
+
+    <!-- Second Table: 2 columns and 8 rows -->
+    <table id="table2">
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr>
+    </table>
+
+    <!-- Text input and submit button -->
+    <div id="input-container">
+      <input type="text" id="input-field" placeholder="Enter text here">
+      <button id="submit-button">Submit</button>
+    </div>
+
+    <!-- 10 Numbered Buttons -->
+    <div id="button-group">
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button>10</button>
+    </div>
+
+    <!-- Third Table: 1 column and 8 rows (Below the buttons) -->
+    <table id="table3">
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td></tr>
+    </table>
   </div>
 </body>
 </html>

@@ -7,16 +7,10 @@
   font-weight: bold;
 }
 
-.pippo-marker {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 5px;
-  border-radius: 5px;
-}
 .custom-div-icon {
   background: transparent;
   border: none;
 }
-
 
 #map-inner {
   margin: auto; /* Centra il contenitore */
@@ -26,4 +20,87 @@
   0% { opacity: 1; }
   50% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+/* General styling for the tables */
+table {
+  width: 200px;
+  border-collapse: collapse;
+  margin: 10px;
+}
+
+td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Positioning the tables and elements on the right */
+#tables-container {
+  position: absolute;
+  top: 150px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Style for table headers */
+.table-header {
+  margin-top: 20px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Text input and submit button, positioned above the numbered buttons */
+#input-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+#input-field {
+  padding: 5px;
+  font-size: 14px;
+}
+
+#submit-button {
+  padding: 5px 10px;
+  margin-left: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Button group styling for numbered buttons */
+#button-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+#button-group button {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#button-group button:hover {
+  background-color: #0056b3;
+}
+
+/* Styling for the third table with 1 column and 8 rows (below the numbered buttons) */
+#table3 {
+  background-color: white;
+  border: 1px solid #ccc;
 }

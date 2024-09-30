@@ -3,16 +3,9 @@ import * as L from 'leaflet';
 import { createGrid } from './griglia';
 import { createIcon } from './iconManager';
 import { setPlayerPosition, addClickEvent } from './info';
+import { fetchChatData } from './chat';
 import config from './config.json';
 
-/* let config:any = {};
-fetch('./config.json')
-  .then(response => response.json())
-  .then(data=>{config=data})
-  .catch(error => {
-    console.error('Errore nel caricamento del file di configurazione:', error);
-  }); */
-console.log(config);
 
 let map: L.Map | null = null;
 
@@ -41,6 +34,9 @@ async function initializeMap() {
 
     const mapInfoResponse = await axios.get(config.JSONMAPSETTING);
     const mapInfo = mapInfoResponse.data;
+
+    const chatInfoResponse = await axios.get(config.CHAT);
+    const chatInfo = chatInfoResponse.data;
 
     if (!mapInfo.grid_size || !mapInfo.map_min || !mapInfo.map_max) {
       throw new Error('Mappa informazioni non valide');
@@ -118,10 +114,14 @@ async function initializeMap() {
         const playerLatLng = L.latLng(absY, absX);
         setPlayerPosition(playerLatLng);  // Usa la funzione per memorizzare la posizione del giocatore
       }
-      
+
       // Usa la funzione per aggiungere l'evento click per calcolare la distanza
       addClickEvent(marker, absY, absX);
     });
+
+    // Chiamata alla funzione che gestisce i dati della chat
+    await fetchChatData();
+
   } catch (error) {
     console.error('Si è verificato un errore:', error);
   }
