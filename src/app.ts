@@ -3,6 +3,16 @@ import * as L from 'leaflet';
 import { createGrid } from './griglia';
 import { createIcon } from './iconManager';
 import { setPlayerPosition, addClickEvent } from './info';
+import config from './config.json';
+
+/* let config:any = {};
+fetch('./config.json')
+  .then(response => response.json())
+  .then(data=>{config=data})
+  .catch(error => {
+    console.error('Errore nel caricamento del file di configurazione:', error);
+  }); */
+console.log(config);
 
 let map: L.Map | null = null;
 
@@ -26,10 +36,10 @@ async function initializeMap() {
       throw new Error('Contenitore interno della mappa non trovato');
     }
 
-    const mapObjectsResponse = await axios.get('http://localhost:8111/map_obj.json');
+    const mapObjectsResponse = await axios.get(config.JSONMARKERSETTING);
     const mapObjects = mapObjectsResponse.data;
 
-    const mapInfoResponse = await axios.get('http://localhost:8111/map_info.json');
+    const mapInfoResponse = await axios.get(config.JSONMAPSETTING);
     const mapInfo = mapInfoResponse.data;
 
     if (!mapInfo.grid_size || !mapInfo.map_min || !mapInfo.map_max) {
@@ -40,7 +50,7 @@ async function initializeMap() {
       [mapInfo.map_min[1], mapInfo.map_min[0]],
       [mapInfo.map_max[1], mapInfo.map_max[0]]
     ];
-    const imageUrl = 'http://localhost:8111/map.img';
+    const imageUrl = config.MAPIMG;
     const map_min = mapInfo.map_min;
     const map_max = mapInfo.map_max;
 
