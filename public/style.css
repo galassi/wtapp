@@ -1,0 +1,29 @@
+.custom-div-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.pippo-marker {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+}
+.custom-div-icon {
+  background: transparent;
+  border: none;
+}
+
+
+#map-inner {
+  margin: auto; /* Centra il contenitore */
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
