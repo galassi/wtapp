@@ -8,12 +8,17 @@ import config from './config.json';
 
 
 let map: L.Map | null = null;
-
+let isInitialized = false;
+let isLoading = false;
 function _rel(rel: number, min: number, max: number) {
   return min + rel * (max - min);
 }
 
+
 async function initializeMap() {
+  if (isInitialized) return; // Prevent re-initialization
+  isLoading = true;
+  
   console.log('Inizio initializeMap function');
 
   try {
@@ -28,13 +33,15 @@ async function initializeMap() {
     if (!mapInnerContainer) {
       throw new Error('Contenitore interno della mappa non trovato');
     }
-
+    console.log('Chiamata Axios per marker settings');
     const mapObjectsResponse = await axios.get(config.JSONMARKERSETTING);
     const mapObjects = mapObjectsResponse.data;
 
+    console.log('Chiamata Axios per marker settings');
     const mapInfoResponse = await axios.get(config.JSONMAPSETTING);
     const mapInfo = mapInfoResponse.data;
 
+    console.log('Chiamata Axios per marker settings');
     const chatInfoResponse = await axios.get(config.CHAT);
     const chatInfo = chatInfoResponse.data;
 
@@ -121,12 +128,21 @@ async function initializeMap() {
 
     // Chiamata alla funzione che gestisce i dati della chat
     await fetchChatData();
+    isInitialized = true; // Set to true after successful initialization
 
   } catch (error) {
     console.error('Si è verificato un errore:', error);
+  }finally {
+    isLoading = false; // Reset loading flag
   }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  initializeMap();
+document.addEventListener('DOMContentLoaded', function onLoaded() {
+  console.log('Evento DOMContentLoaded attivato');
+  if (!isInitialized && !isLoading) {
+    console.log('Inizializzando la mappa...');
+    initializeMap().then(() => {
+      document.removeEventListener('DOMContentLoaded', onLoaded);
+    });
+  }
 });

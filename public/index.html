@@ -10,9 +10,6 @@
 </head>
 <body>
   <div id="map" style="height: 90vh;width: 50vw; position: relative;"></div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="bundle.js"></script>
-
   <div id="info-box" style="position: absolute; top: 10px; right: 10px; width: 200px; height: auto; background: white; border: 1px solid #ccc; padding: 10px;">
     info: <span id="distance"></span>
   </div>
@@ -52,7 +49,7 @@
     <!-- Text input and submit button -->
     <div id="input-container">
       <input type="text" id="input-field" placeholder="Enter text here">
-      <button id="submit-button">Submit</button>
+      <button id="submit-button">Submit (0)</button>
     </div>
 
     <!-- 10 Numbered Buttons -->
@@ -69,7 +66,7 @@
       <button>10</button>
     </div>
 
-    <!-- Third Table: 1 column and 8 rows (Below the buttons) -->
+    <!-- Third Table: 1 column and 8 rows -->
     <table id="table3">
       <tr><td></td></tr>
       <tr><td></td></tr>
@@ -81,5 +78,7 @@
       <tr><td></td></tr>
     </table>
   </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="bundle.js"></script> <!-- Ensure this is last -->
 </body>
 </html>
