@@ -37,11 +37,11 @@ async function initializeMap() {
     const mapObjectsResponse = await axios.get(config.JSONMARKERSETTING);
     const mapObjects = mapObjectsResponse.data;
 
-    console.log('Chiamata Axios per marker settings');
+    console.log('Chiamata Axios per map settings');
     const mapInfoResponse = await axios.get(config.JSONMAPSETTING);
     const mapInfo = mapInfoResponse.data;
 
-    console.log('Chiamata Axios per marker settings');
+    console.log('Chiamata Axios per chat settings');
     const chatInfoResponse = await axios.get(config.CHAT);
     const chatInfo = chatInfoResponse.data;
 

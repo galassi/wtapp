@@ -77,6 +77,20 @@ td {
   background-color: #0056b3;
 }
 
+/* New styling for the reset button */
+#reset-button {
+  padding: 5px 10px;
+  margin-right: 5px; /* Space between reset button and input field */
+  background-color: #ff4c4c;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#reset-button:hover {
+  background-color: #d93636;
+}
+
 /* Button group styling for numbered buttons */
 #button-group {
   display: flex;
