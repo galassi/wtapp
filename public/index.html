@@ -9,17 +9,24 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <div id="map" style="height: 90vh;width: 50vw; position: relative;"></div>
-  <div id="info-box" style="position: absolute; top: 10px; right: 10px; width: 200px; height: auto; background: white; border: 1px solid #ccc; padding: 10px;">
+    <div id="control-buttons">
+      <div id="message"></div>
+      <button id="sky-button">Cielo</button>
+      <button id="ground-button">Terra</button>
+      <button id="both-button">Entrambi</button>
+      <button id="reset-view-button">Reset</button>
+    </div>
+    <div id="toggle-buttons">
+      <button id="marker-toggle">Marker ON/OFF</button>
+      <button id="chat-toggle">Chat ON/OFF</button>
+    </div>
+  <div id="map" ></div>
+  <div id="info-box" >
     info: <span id="distance"></span>
   </div>
-
-  <!-- Tables container -->
   <div id="tables-container">
-    <!-- ONLINE label -->
+    <!-- table1 -->
     <div class="table-header"><strong>ONLINE</strong></div>
-
-    <!-- First Table: 2 columns and 8 rows -->
     <table id="table1">
       <tr><td></td><td></td></tr>
       <tr><td></td><td></td></tr>
@@ -30,11 +37,8 @@
       <tr><td></td><td></td></tr>
       <tr><td></td><td></td></tr>
     </table>
-
-    <!-- OFFLINE label -->
     <div class="table-header"><strong>OFFLINE</strong></div>
-
-    <!-- Second Table: 2 columns and 8 rows -->
+    <!-- table2 -->
     <table id="table2">
       <tr><td></td><td></td></tr>
       <tr><td></td><td></td></tr>
@@ -45,14 +49,12 @@
       <tr><td></td><td></td></tr>
       <tr><td></td><td></td></tr>
     </table>
-
     <!-- Text input and submit button with reset button -->
     <div id="input-container">
       <button id="reset-button">Resetta Filtri</button>
       <input type="text" id="input-field" placeholder="Enter text here">
       <button id="submit-button">Submit (0)</button>
     </div>
-
     <!-- 10 Numbered Buttons -->
     <div id="button-group">
       <button>1</button>
@@ -66,8 +68,7 @@
       <button>9</button>
       <button>10</button>
     </div>
-
-    <!-- Third Table: 1 column and 8 rows -->
+    <!-- table3 -->
     <table id="table3">
       <tr><td></td></tr>
       <tr><td></td></tr>

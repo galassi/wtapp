@@ -5,15 +5,55 @@
   color: black;
   font-size: 30px;
   font-weight: bold;
-}
-
-.custom-div-icon {
   background: transparent;
   border: none;
 }
 
 #map-inner {
   margin: auto; /* Centra il contenitore */
+}
+
+#map {
+  height: 90vh;
+  width: 50vw;
+  position: relative;
+}
+#control-buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+#toggle-buttons {
+  position: absolute;
+  top: 110px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+#control-buttons button, #toggle-buttons button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#control-buttons button:hover, #toggle-buttons button:hover {
+  background-color: #0056b3;
+}
+#info-box {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  width: 200px;
+  height: auto;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 @keyframes blink {

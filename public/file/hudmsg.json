@@ -1,0 +1,151 @@
+{
+
+      "events": [ ],
+      "damage": [
+            {
+                  "id": 1,
+                  "msg": "=CLAN= uno (Carro1) gravemente danneggiato SBAM undici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 10
+            },
+            {
+                  "id": 2,
+                  "msg": "=CLAN= due (Carro1) gravemente danneggiato SBAM dodici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 20
+            },
+            {
+                  "id": 3,
+                  "msg": "=CLAN= tre (Carro1) gravemente danneggiato SBAM tredici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 30
+            },
+            {
+                  "id": 4,
+                  "msg": "=CLAN= quattro (Carro1) gravemente danneggiato SBAM diciotto (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 40
+            },
+            {
+                  "id": 5,
+                  "msg": "=CLAN= quattordici (Z-9WA) gravemente danneggiato SBAM cinque (Carro2)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 50
+            },
+            {
+                  "id": 6,
+                  "msg": "=CLAN= sei (Carro2) gravemente danneggiato SBAM quindici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 60
+            },
+            {
+                  "id": 7,
+                  "msg": "=CLAN= sette (Carro2) gravemente danneggiato SBAM sedici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 70
+            },
+            {
+                  "id": 8,
+                  "msg": "=CLAN= otto (Carro2) gravemente danneggiato SBAM diciasette (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 80
+            },
+            {
+                  "id": 9,
+                  "msg": "=CLAN= uno (IS-3) ha distrutto SBAM undici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 90
+            },
+            {
+                  "id": 10,
+                  "msg": "=CLAN= due (IS-3) ha distrutto SBAM dodici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 100
+            },    
+            {
+                  "id": 11,
+                  "msg": "=CLAN= tre (IS-3) ha distrutto SBAM tredici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 110
+            },           
+            {
+                  "id": 12,
+                  "msg": "=CLAN= tre (IS-3) ha distrutto SBAM quattordici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 120
+            },           
+            {
+                  "id": 13,
+                  "msg": "=CLAN= quattro (IS-3) ha distrutto SBAM quindici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 130
+            },           
+            {
+                  "id": 14,
+                  "msg": "=CLAN= sedici (IS-3) ha distrutto SBAM cinque (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 150
+            },           
+            {
+                  "id": 15,
+                  "msg": "=CLAN= diciasette (IS-3) ha distrutto SBAM sei (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 160
+            },           
+            {
+                  "id": 16,
+                  "msg": "=CLAN= otto (IS-3) ha distrutto SBAM sedici (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 180
+            },           
+            {
+                  "id": 17,
+                  "msg": "=CLAN= sette (IS-3) ha distrutto SBAM diciasette (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 200
+            },                             
+            {
+                  "id": 18,
+                  "msg": "=CLAN= sette (IS-3) ha distrutto SBAM diciotto (M4A3E2 (76) W)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 220
+            }
+      ]
+
+}

@@ -1,6 +1,7 @@
-import { stringArray } from './script';
+import { stringArray } from './script'; // Assuming this is an array of strings (allies)
 import axios from 'axios';
 import config from './config.json';
+import { ChatInfo } from './types';
 
 // Variabile per salvare gli ID già filtrati
 let filteredIds: Set<number> = new Set<number>();
@@ -8,8 +9,8 @@ let filteredIds: Set<number> = new Set<number>();
 // Variabile per salvare i tempi (time) associati ai messaggi filtrati
 let filteredTimes: number[] = [];
 
-// Parole chiave per il filtro dei messaggi (senza "ha ottenuto")
-const keywordFilters = [
+// Parole chiave per il filtro dei messaggi
+const keywordFilters: string[] = [
   "pesantemente danneggiato",
   "schiantato",
   "ha abbattuto",
@@ -23,13 +24,16 @@ let isChatDataFetched = false;
 // Variabile per l'ID attuale (da fornire dinamicamente, ad esempio dall'interfaccia utente)
 let currentId = 0; // Può essere aggiornato dinamicamente tramite interfaccia
 
-export async function fetchChatData() {
+/**
+ * Funzione per recuperare i dati della chat
+ */
+export async function fetchChatData(): Promise<void> {
   if (isChatDataFetched) return; // Prevent re-fetch
   isChatDataFetched = true;
 
   try {
     console.log('Recupero dati chat');
-    const chatInfoResponse = await axios.get(config.CHAT);
+    const chatInfoResponse = await axios.get<ChatInfo>(config.CHAT); // Using typed response
     const chatInfo = chatInfoResponse.data;
 
     // Elaborazione dei dati della chat
@@ -48,7 +52,7 @@ export async function fetchChatData() {
  * @param allies Array di stringhe contenente i nomi degli alleati
  * @returns Array con i dati degli avversari o degli alleati distrutti
  */
-const extractOpponentData = (damageLog: any[], allies: string[]) => {
+const extractOpponentData = (damageLog: ChatInfo['damage'], allies: string[]) => {
   return damageLog
     .filter(entry => {
       // Filtra l'ID se è maggiore dell'ID attuale
@@ -77,7 +81,7 @@ const extractOpponentData = (damageLog: any[], allies: string[]) => {
       return false; // Filtra via l'elemento se non contiene le parole chiave
     })
     .map(entry => {
-      // Regex aggiornata per trovare attaccante e bersaglio (se presente) dal messaggio di log
+      // Regex per trovare attaccante e bersaglio dal messaggio di log
       const regex = /([^\s()]+) \(([^)]+)\) ha .*? ([^\s()]+)? \(([^)]+)\)?/;
       const match = entry.msg.match(regex);
 
@@ -89,7 +93,9 @@ const extractOpponentData = (damageLog: any[], allies: string[]) => {
 
         // Se l'attaccante o il bersaglio è un alleato, verifica se è stato abbattuto/distrutto
         let isAllyDestroyed = false;
-        let allyInfo = null;
+        
+        // Define allyInfo type properly as an object or null
+        let allyInfo: { ally: string; allyVehicle: string; action: string } | null = null;
 
         if (allies.includes(attacker)) {
           isAllyDestroyed = true;
@@ -123,10 +129,11 @@ const extractOpponentData = (damageLog: any[], allies: string[]) => {
 // Funzione per resettare il set di filteredIds
 export function resetFilteredIds() {
   filteredIds.clear(); // Reset filteredIds
+  filteredTimes = []; // Reset filtered times
   console.log('filteredIds resettato a 0.');
 }
 
-// Esempio di utilizzo del bottone (se si sta usando un framework come React o vanilla JS)
+// Aggiungi listener per il bottone "reset" se presente
 document.getElementById('reset-button')?.addEventListener('click', resetFilteredIds);
 
 // In un secondo momento, puoi accedere ai tempi filtrati così:

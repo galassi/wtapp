@@ -1,0 +1,748 @@
+[
+
+      {
+            "type": "airfield",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": 0.372322,
+            "sy": 1.57816,
+            "ex": 0.381086,
+            "ey": 1.517758
+      },
+      {
+            "type": "airfield",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": -0.804456,
+            "sy": 3.166038,
+            "ex": -0.782253,
+            "ey": 3.046003
+      },
+      {
+            "type": "airfield",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": 1.223997,
+            "sy": -0.299166,
+            "ex": 1.184128,
+            "ey": -0.252953
+      },
+      {
+            "type": "airfield",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": 2.432327,
+            "sy": -1.708231,
+            "ex": 2.463865,
+            "ey": -1.590305
+      },
+      {
+            "type": "airfield",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": -2.655851,
+            "sy": 2.336277,
+            "ex": -1.876617,
+            "ey": 2.280178
+      },
+      {
+            "type": "airfield",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "none",
+            "icon_bg": "none",
+            "sx": 3.30023,
+            "sy": -1.998254,
+            "ex": 2.721731,
+            "ey": -1.473191
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 2.820972,
+            "y": -1.499512
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 2.859399,
+            "y": -1.713843
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 2.770752,
+            "y": -1.672729
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 3.137036,
+            "y": -1.962915
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 3.056079,
+            "y": -1.711792
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 3.01853,
+            "y": -1.865503
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 2.90166,
+            "y": -1.750415
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "Airdefence",
+            "icon_bg": "none",
+            "x": 2.998657,
+            "y": -1.66355
+      },
+      {
+            "type": "ground_model",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "MediumTank",
+            "icon_bg": "none",
+            "x": 0.705163,
+            "y": 0.329543
+      },
+      {
+            "type": "ground_model",
+            "color": "#1829A7",
+            "color[]": [
+                  24,
+                  41,
+                  167
+            ],
+            "blink": 0,
+            "icon": "MediumTank",
+            "icon_bg": "none",
+            "x": 0.713447,
+            "y": 0.321914
+      },
+      {
+            "type": "ground_model",
+            "color": "#1829A7",
+            "color[]": [
+                  24,
+                  41,
+                  167
+            ],
+            "blink": 0,
+            "icon": "HeavyTank",
+            "icon_bg": "none",
+            "x": 0.701373,
+            "y": 0.315992
+      },
+      {
+            "type": "capture_zone",
+            "color": "#ffFFFA",
+            "color[]": [
+                  255,
+                  255,
+                  250
+            ],
+            "blink": 0,
+            "icon": "capture_zone",
+            "icon_bg": "none",
+            "x": 0.695386,
+            "y": 0.4375
+      },
+      {
+            "type": "respawn_base_fighter",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_fighter",
+            "icon_bg": "none",
+            "x": -1.988816,
+            "y": 3.426419,
+            "dx": 195.658997,
+            "dy": -227.414001
+      },
+      {
+            "type": "respawn_base_fighter",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_fighter",
+            "icon_bg": "none",
+            "x": 2.286697,
+            "y": -2.415356,
+            "dx": -156.632996,
+            "dy": 255.863007
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.719087,
+            "y": 0.558264
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.712954,
+            "y": 0.559858
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.729062,
+            "y": 0.557837
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.708337,
+            "y": 0.562065
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.723953,
+            "y": 0.559363
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.712241,
+            "y": 0.564785
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.728892,
+            "y": 0.561743
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.716865,
+            "y": 0.565164
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.707993,
+            "y": 0.567256
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.721121,
+            "y": 0.565132
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.712505,
+            "y": 0.56863
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.733062,
+            "y": 0.564768
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.724956,
+            "y": 0.568213
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.729334,
+            "y": 0.568179
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.716438,
+            "y": 0.572417
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#fa3200",
+            "color[]": [
+                  250,
+                  50,
+                  0
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.72155,
+            "y": 0.57197
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.693401,
+            "y": 0.318223
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.71469,
+            "y": 0.317756
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.701687,
+            "y": 0.314683
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.695913,
+            "y": 0.314287
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.706621,
+            "y": 0.314722
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.691846,
+            "y": 0.313455
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.711829,
+            "y": 0.314468
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.698269,
+            "y": 0.309959
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.702859,
+            "y": 0.309675
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.714189,
+            "y": 0.308914
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.69469,
+            "y": 0.305457
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.705498,
+            "y": 0.305728
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.689299,
+            "y": 0.303906
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.715769,
+            "y": 0.303723
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.699656,
+            "y": 0.301357
+      },
+      {
+            "type": "respawn_base_tank",
+            "color": "#185AFF",
+            "color[]": [
+                  24,
+                  90,
+                  255
+            ],
+            "blink": 0,
+            "icon": "respawn_base_tank",
+            "icon_bg": "none",
+            "x": 0.695369,
+            "y": 0.299524
+      }
+
+]

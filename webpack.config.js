@@ -1,45 +1,84 @@
+// webpack.config.js
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/app.ts', // Your main TypeScript file
-  devtool: 'inline-source-map', // For easier debugging in dev mode
+  entry: './src/app.ts',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
-        test: /\.ts$/, // For all .ts files
-        use: 'ts-loader', // Use ts-loader for transpiling TypeScript
-        exclude: /node_modules/, // Don't process node_modules
+        test: /\.ts$/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            configFile: 'tsconfig.client.json',
+          },
+        },
+        exclude: /node_modules/,
       },
       {
-        test: /\.css$/, // For loading CSS files
-        use: ['style-loader', 'css-loader'], // Apply style-loader and css-loader
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
       },
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'], // Handle these extensions
+    extensions: ['.ts', '.js'],
+    fallback: {
+      fs: false,
+      path: false,
+      os: false,
+      http: false,
+      https: false,
+      stream: false,
+      zlib: false,
+      net: false,
+      tls: false,
+    },
   },
   output: {
-    filename: 'bundle.js', // The output file name
-    path: path.resolve(__dirname, 'dist'), // Output directory
-    clean: true, // Clean the dist folder before each build
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    clean: true,
   },
+
+
   devServer: {
     static: {
-      directory: path.join(__dirname, 'public'), // Serve static files from public
+      directory: path.join(__dirname, 'public'),
+      watch: {
+        ignored: [
+          path.resolve(__dirname, 'public/image/*'),
+          path.resolve(__dirname, 'public/file/*'),
+        ],
+      },
     },
-    compress: true, // Enable gzip compression
-    port: 9000, // Dev server runs on port 9000
-    open: true, // Automatically open the browser
+    compress: true,
+    port: 9000,
+    open: true,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:3000',
+        secure: false,
+        changeOrigin: true,
+      },
+    ],
   },
+  
+  
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'public/index.html', // Use your index.html template in public/
+      template: 'public/index.html',
     }),
   ],
   performance: {
-    hints: false, // Disable performance warnings
+    hints: false,
   },
 };
