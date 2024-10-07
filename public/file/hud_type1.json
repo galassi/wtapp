@@ -1,10 +1,27 @@
 {
-   "grid_size" : [ 32760.0, 32760.0 ],
-   "grid_steps" : [ 3200.0, 3200.0 ],
-   "grid_zero" : [ -16380.0, 16380.0 ],
-   "hud_type" : 0,
-   "map_generation" : 2,
-   "map_max" : [ 16380.0, 16380.0 ],
-   "map_min" : [ -16380.0, -16380.0 ],
-   "valid" : true
+
+      "grid_size": [
+            1300,
+            1300
+      ],
+      "grid_steps": [
+            180,
+            180
+      ],
+      "grid_zero": [
+            2198.169921875,
+            2894.889892578125
+      ],
+      "hud_type": 1,
+      "map_generation": 2,
+      "map_max": [
+            4096,
+            4096
+      ],
+      "map_min": [
+            0,
+            0
+      ],
+      "valid": true
+
 }

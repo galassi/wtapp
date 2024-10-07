@@ -62,13 +62,19 @@ async function handleMapAndJsonDownload(mode: 'sky' | 'ground') {
   // Scarica e salva l'immagine della mappa
   await downloadAndSaveFile(mapImageUrl, mapImageFile);
   // Aggiungi un breve ritardo per evitare problemi di connessione
-  await new Promise((resolve) => setTimeout(resolve,1000)); // 1000 ms
+  await new Promise((resolve) => setTimeout(resolve,1500)); // 1500 ms
   // Scarica e salva il file JSON
   await downloadAndSaveFile(jsonMapSettingsUrl, jsonMapSettingsFile);
 }
 
 async function downloadAndSaveFile(url: string, filePath: string) {
   try {
+    // Verifica se il file esiste già
+    if (fs.existsSync(filePath)) {
+      console.log(`File already exists: ${filePath}, skipping download.`);
+      return; // Salta il download e il salvataggio
+    }
+
     console.log(`Downloading file from ${url}`);
 
     const response = await axios.get<ArrayBuffer>(url, {
@@ -82,22 +88,15 @@ async function downloadAndSaveFile(url: string, filePath: string) {
 
     const buffer = Buffer.from(response.data);
 
-    // Assicura che la directory esista
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
+    // Scrivi il file
     fs.writeFileSync(filePath, buffer);
     console.log(`File saved to ${filePath}`);
   } catch (err) {
-    console.error(
-      `Error downloading or saving file from ${url} to ${filePath}:`,
-      err
-    );
+    console.error(`Error downloading or saving file from ${url} to ${filePath}:`, err);
     throw err;
   }
 }
+
 
 // Endpoint per cancellare i file della mappa e del JSON
 app.get('/api/delete-map', (req, res) => {
