@@ -1,4 +1,4 @@
-import { initializeMap, changeMapMode, loadOverlayAndBounds,resetView } from './mapManager';
+import { initializeMap, changeMapMode, loadOverlayAndBounds, resetView } from './mapManager';
 import { fetchMarkerSettings } from './dataFetcher';
 import { fetchChatData } from './chat';
 import axios from 'axios';
@@ -6,6 +6,7 @@ import { MapObject } from './types';
 import * as L from 'leaflet';
 
 let isLoading = false;
+let resetOn = false;
 let currentMap: L.Map | null = null;
 
 // Imposta il timeout di Axios se necessario
@@ -25,11 +26,9 @@ async function init(mode: 'sky' | 'ground') {
     await axios.get(`/api/download-map?mode=${mode}`);
 
     // Inizializza la mappa solo se non è già esistente
-    await initializeMap();  // Controlla internamente se mapInstance esiste già
-
+      await initializeMap();  // Controlla internamente se mapInstance esiste già
     // Carica l'overlay e i bounds in base alla modalità selezionata
-    await loadOverlayAndBounds(mode);
-
+      await loadOverlayAndBounds(mode);
     console.log('Mappa inizializzata correttamente.');
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -68,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
     await init(mode);  // Chiama init una sola volta per inizializzare la mappa
 
     // Cambia la modalità della mappa
-    changeMapMode(mode);
+      await changeMapMode(mode);
   }
 
   // Listener per il bottone "Cielo"
@@ -88,10 +87,11 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   }
 
   // Listener per il bottone "Reset"
-  if (resetButton) {
+  if (resetButton&&!resetOn) {
     resetButton.addEventListener('click', () => {
+      resetOn = true;
       console.log('Resettando la vista e cancellando i file...');
-      resetView();
+      resetView(resetOn);
     });
   }
 });

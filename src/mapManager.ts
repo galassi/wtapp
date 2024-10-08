@@ -19,7 +19,6 @@ export async function initializeMap(): Promise<L.Map> {
   if (!mapInnerContainer) {
     throw new Error('Contenitore interno della mappa non trovato');
   }
-
   // Controlla se esiste già una mappa e non crearne una nuova se esiste
   if (mapInstance) {
     console.warn('La mappa è già stata inizializzata, saltando la creazione di una nuova istanza.');
@@ -44,19 +43,23 @@ export async function initializeMap(): Promise<L.Map> {
  * Carica i dati della mappa e crea l'overlay solo se non esiste.
  */
 export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
-  const url = mode === 'sky' ? '/file/hud_type0.json' : '/file/hud_type1.json';
-  const imageUrl = mode === 'sky' ? '/image/map0.jpg' : '/image/map1.jpg';
+   let url = mode === 'sky' ? '/file/hud_type0.json' : '/file/hud_type1.json';
+   let imageUrl = mode === 'sky' ? '/image/map0.jpg' : '/image/map1.jpg';
 
   console.log(`Inizializzando overlay per ${mode}...`);
 
   try {
-    const response = await axios.get<MapInfo>(url);
-    const mapInfo = response.data;
+    let response = await axios.get<MapInfo>(url);
+    let mapInfo = response.data;
+
     setBounds(mapInfo.map_min, mapInfo.map_max);
     setGrid(mapInfo.grid_zero, mapInfo.grid_steps, mapInfo.grid_size, mode); // Imposta i parametri della griglia
 
     if (mode === 'sky' && !skyOverlay) {
       // Crea l'overlay per il cielo solo se non esiste già
+      if (skyOverlay) {
+        mapInstance!.removeLayer(skyOverlay);
+      }
       skyOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 0 }); // Nascondi inizialmente
       skyOverlay.addTo(mapInstance!);
       console.log('Overlay cielo creato e aggiunto.');
@@ -64,6 +67,9 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
 
     if (mode === 'ground' && !groundOverlay) {
       // Crea l'overlay per la terra solo se non esiste già
+      if (groundOverlay) {
+        mapInstance!.removeLayer(groundOverlay);
+      }
       groundOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 1 }); // Nascondi inizialmente
       groundOverlay.addTo(mapInstance!);
       console.log('Overlay terra creato e aggiunto.');
@@ -84,7 +90,7 @@ export function changeMapMode(mode: 'sky' | 'ground') {
     return;
   }
 
-  if (mode === 'sky') {
+  if (mode === 'sky'&&skyOverlay) {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
       console.log('Passato a modalità cielo. Adattato ai bounds del cielo.', currentBounds);
@@ -93,7 +99,7 @@ export function changeMapMode(mode: 'sky' | 'ground') {
       createGrid(mapInstance!, skyGridParams.gridZero, skyGridParams.gridSteps, skyGridParams.gridSize);
       console.log('Griglia cielo creata.');
     }
-  } else if (mode === 'ground') {
+  } if (mode === 'ground'&&groundOverlay) {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
       console.log('Passato a modalità terra. Adattato ai bounds della terra.', currentBounds);
@@ -129,7 +135,17 @@ function setGrid(gridZero: [number, number], gridSteps: [number, number], gridSi
 /**
  * Funzione per resettare la mappa, rimuovere gli overlay e smontare completamente L.Map.
  */
-export async function resetView() {
+export async function resetView(resetOn:Boolean) {
+  // Invia una richiesta al server per cancellare i file mappa e JSON
+  try {
+    console.log('Richiesta di cancellazione dei file al server...');
+    resetOn=false;
+    await axios.get('/api/delete-map');
+    console.log('File cancellati correttamente.');
+  } catch (error) {
+    console.error('Errore durante la cancellazione dei file:', error);
+  }
+
   if (!mapInstance) {
     console.error('La mappa non è stata inizializzata.');
     return;
@@ -154,15 +170,11 @@ export async function resetView() {
   console.log('Smontaggio completo della mappa...');
   mapInstance.remove();  // Rimuove la mappa dal DOM e pulisce tutte le risorse associate
   mapInstance = null;  // Resetta l'istanza della mappa
-
-  // Invia una richiesta al server per cancellare i file mappa e JSON
-  try {
-    console.log('Richiesta di cancellazione dei file al server...');
-    await axios.get('/api/delete-map');
-    console.log('File cancellati correttamente.');
-  } catch (error) {
-    console.error('Errore durante la cancellazione dei file:', error);
-  }
+  
+  // Resetta anche i bounds e i parametri della griglia
+  currentBounds = null;
+  skyGridParams = null;
+  groundGridParams = null;
 
   console.log('Reset completato.');
 }
