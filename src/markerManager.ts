@@ -2,15 +2,26 @@ import * as L from 'leaflet';
 import { createIcon } from './iconManager';
 import { setPlayerPosition, addClickEvent } from './info';
 import { MapObject, Marker, MarkerId } from './types';
-import { _rel } from './utils';
 import axios from 'axios';
 import { processMarkers } from './filtro'; // Importa la funzione processMarkers
+import { getMarkerBounds } from './mapManager';
 
+function _rel(rel: number, min: number, max: number): number {
+  return min + rel * (max - min);
+}
 // Funzione per ottenere le impostazioni dei marker
 export async function fetchMarkerSettings(): Promise<Marker[]> {
   try {
     const response = await axios.get<MapObject[]>('/file/hud_type0.json'); // Supponendo che la risposta sia un array di oggetti
     const mapObjects = response.data;
+
+    // Ottieni i bounds minimi e massimi
+    const bounds = getMarkerBounds();
+    const minLatLng = bounds.getSouthWest();
+    const maxLatLng = bounds.getNorthEast();
+    // Ottieni i valori minimi e massimi delle coordinate
+    const map_min = [minLatLng.lng, minLatLng.lat]; // [minX, minY]
+    const map_max = [maxLatLng.lng, maxLatLng.lat]; // [maxX, maxY]
 
     // Converti gli oggetti in Marker[]
     const markers: Marker[] = mapObjects.map((obj) => {
@@ -31,6 +42,11 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
         dx = endX - startX;
         dy = endY - startY;
       }
+
+      x = _rel(x, map_min[0], map_max[0]); // Converte x in base a map_min e map_max
+      const correctedY = 1 - y; // Corregge l'asse Y (inversione)
+      y = _rel(correctedY, map_min[1], map_max[1]); // Converte y in base a map_min e map_max
+
 
       // Crea l'oggetto Marker
       const marker: Marker = {
@@ -61,31 +77,4 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
 
 
 
-export function addMapMarkers(map: L.Map, mapObjects: any[], map_min: number[], map_max: number[]): void {
-  mapObjects.forEach((obj: any) => {
-    let x = obj.x || 0;
-    let y = obj.y || 0;
-    let dx = obj.dx || 0;
-    let dy = obj.dy || 0;
 
-    // Converte le coordinate relative (0-1) in coordinate assolute basate su map_min e map_max
-    const absX = _rel(x, map_min[0], map_max[0]); // Converte x in base a map_min e map_max
-    const correctedY = 1 - y; // Corregge l'asse Y (inversione)
-    const absY = _rel(correctedY, map_min[1], map_max[1]); // Converte y in base a map_min e map_max
-
-    // Crea l'icona per il marker e posiziona il marker sulla mappa
-    const icon = createIcon(obj, dx, dy);
-    const marker = L.marker([absY, absX], { icon });
-
-    marker.addTo(map); // Aggiunge il marker alla mappa
-
-    // Se l'oggetto rappresenta il "Player", aggiorna la posizione del giocatore
-    if (obj.icon === 'Player') {
-      const playerLatLng = L.latLng(absY, absX);
-      setPlayerPosition(playerLatLng);
-    }
-
-    // Aggiunge l'evento di click per calcolare la distanza dal marker
-    addClickEvent(marker, absY, absX);
-  });
-}

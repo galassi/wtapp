@@ -9,7 +9,8 @@ let groundOverlay: L.ImageOverlay | null = null;
 let currentBounds: L.LatLngBounds | null = null;
 let skyGridParams: { gridZero: [number, number], gridSteps: [number, number], gridSize: [number, number] } | null = null;
 let groundGridParams: { gridZero: [number, number], gridSteps: [number, number], gridSize: [number, number] } | null = null;
-
+let skygrid=false;
+let groundgrid=false;
 
 /* Inizializza la mappa con le impostazioni caricate dal file locale. */
 
@@ -54,7 +55,6 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
 
     setBounds(mapInfo.map_min, mapInfo.map_max);
     setGrid(mapInfo.grid_zero, mapInfo.grid_steps, mapInfo.grid_size, mode); // Imposta i parametri della griglia
-
     if (mode === 'sky' && !skyOverlay) {
       // Crea l'overlay per il cielo solo se non esiste già
       if (skyOverlay) {
@@ -95,8 +95,9 @@ export function changeMapMode(mode: 'sky' | 'ground') {
       mapInstance.fitBounds(currentBounds);
       console.log('Passato a modalità cielo. Adattato ai bounds del cielo.', currentBounds);
     }
-    if (skyGridParams) {
+    if (skyGridParams&&!skygrid) {
       createGrid(mapInstance!, skyGridParams.gridZero, skyGridParams.gridSteps, skyGridParams.gridSize);
+      skygrid=true;
       console.log('Griglia cielo creata.');
     }
   } if (mode === 'ground'&&groundOverlay) {
@@ -105,8 +106,9 @@ export function changeMapMode(mode: 'sky' | 'ground') {
       console.log('Passato a modalità terra. Adattato ai bounds della terra.', currentBounds);
     }
 
-    if (groundGridParams) {
+    if (groundGridParams&&!groundgrid) {
       createGrid(mapInstance!, groundGridParams.gridZero, groundGridParams.gridSteps, groundGridParams.gridSize);
+      groundgrid=true;
       console.log('Griglia terra creata.');
     }
   }
@@ -119,6 +121,12 @@ function setBounds(min: [number, number], max: [number, number]) {
   currentBounds = L.latLngBounds([min[1], min[0]], [max[1], max[0]]);
 }
 
+export function getMarkerBounds(): L.LatLngBounds {
+  if (currentBounds === null) {
+    throw new Error('currentBounds non è stato ancora impostato.');
+  }
+  return currentBounds;
+}
 /**
  * Imposta i parametri della griglia separatamente per 'sky' e 'ground'.
  */
@@ -175,6 +183,8 @@ export async function resetView(resetOn:Boolean) {
   currentBounds = null;
   skyGridParams = null;
   groundGridParams = null;
+  skygrid=false;
+  groundgrid=false;
 
   console.log('Reset completato.');
 }
