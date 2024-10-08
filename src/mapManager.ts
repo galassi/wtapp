@@ -15,7 +15,7 @@ let groundGridParams: { gridZero: [number, number], gridSteps: [number, number],
 
 export async function initializeMap(): Promise<L.Map> {
   const mapInnerContainer = document.getElementById('map-inner');
-  
+
   if (!mapInnerContainer) {
     throw new Error('Contenitore interno della mappa non trovato');
   }
@@ -48,7 +48,7 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
   const imageUrl = mode === 'sky' ? '/image/map0.jpg' : '/image/map1.jpg';
 
   console.log(`Inizializzando overlay per ${mode}...`);
-  
+
   try {
     const response = await axios.get<MapInfo>(url);
     const mapInfo = response.data;
@@ -57,14 +57,14 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
 
     if (mode === 'sky' && !skyOverlay) {
       // Crea l'overlay per il cielo solo se non esiste già
-      skyOverlay = L.imageOverlay(imageUrl, currentBounds!, { opacity: 0 }); // Nascondi inizialmente
+      skyOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 0 }); // Nascondi inizialmente
       skyOverlay.addTo(mapInstance!);
       console.log('Overlay cielo creato e aggiunto.');
     }
 
     if (mode === 'ground' && !groundOverlay) {
       // Crea l'overlay per la terra solo se non esiste già
-      groundOverlay = L.imageOverlay(imageUrl, currentBounds!, { opacity: 0 }); // Nascondi inizialmente
+      groundOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 1 }); // Nascondi inizialmente
       groundOverlay.addTo(mapInstance!);
       console.log('Overlay terra creato e aggiunto.');
     }
@@ -85,28 +85,18 @@ export function changeMapMode(mode: 'sky' | 'ground') {
   }
 
   if (mode === 'sky') {
-    // Mostra l'overlay del cielo e nascondi quello della terra
-    skyOverlay?.setOpacity(1);
-    groundOverlay?.setOpacity(0);
-
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
-      console.log('Passato a modalità cielo. Adattato ai bounds del cielo.');
+      console.log('Passato a modalità cielo. Adattato ai bounds del cielo.', currentBounds);
     }
-
     if (skyGridParams) {
       createGrid(mapInstance!, skyGridParams.gridZero, skyGridParams.gridSteps, skyGridParams.gridSize);
       console.log('Griglia cielo creata.');
     }
-
   } else if (mode === 'ground') {
-    // Mostra l'overlay della terra e nascondi quello del cielo
-    skyOverlay?.setOpacity(0);
-    groundOverlay?.setOpacity(1);
-
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
-      console.log('Passato a modalità terra. Adattato ai bounds della terra.');
+      console.log('Passato a modalità terra. Adattato ai bounds della terra.', currentBounds);
     }
 
     if (groundGridParams) {

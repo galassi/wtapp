@@ -5,7 +5,6 @@ import axios from 'axios';
 import { MapObject } from './types';
 import * as L from 'leaflet';
 
-let isInitialized = false;
 let isLoading = false;
 let currentMap: L.Map | null = null;
 
@@ -31,7 +30,6 @@ async function init(mode: 'sky' | 'ground') {
     // Carica l'overlay e i bounds in base alla modalità selezionata
     await loadOverlayAndBounds(mode);
 
-    isInitialized = true;
     console.log('Mappa inizializzata correttamente.');
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -61,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   // Funzione per inizializzare la mappa se non è già inizializzata
   async function initializeIfNeeded(mode: 'sky' | 'ground') {
     // Aggiungi un controllo per evitare chiamate multiple
-    if (isInitialized || isLoading) {
+    if (isLoading) {
       console.log('Mappa già inizializzata o caricamento in corso, salto l\'inizializzazione.');
       return;
     }
