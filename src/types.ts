@@ -41,3 +41,20 @@ export interface MapObject {
   dx?: number;
   dy?: number;
 }
+
+export interface Marker {
+  x: number;
+  y: number;
+  dx: number; // Aggiungi questa riga
+  dy: number; // Aggiungi questa riga
+  'color[]': number[];
+  type: string;
+  icon: string;
+  id:'';
+}
+
+export interface MarkerId {
+  id: string;
+  x: number;
+  y: number;
+}

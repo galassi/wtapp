@@ -1,13 +1,10 @@
 import { initializeMap, changeMapMode, loadOverlayAndBounds, resetView } from './mapManager';
-import { fetchMarkerSettings } from './dataFetcher';
+import { fetchMarkerSettings } from './markerManager';
 import { fetchChatData } from './chat';
 import axios from 'axios';
-import { MapObject } from './types';
-import * as L from 'leaflet';
 
 let isLoading = false;
 let resetOn = false;
-let currentMap: L.Map | null = null;
 
 // Imposta il timeout di Axios se necessario
 axios.defaults.timeout = 10000; // 10 secondi
@@ -48,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   const groundButton = document.getElementById('ground-button');
   const resetButton = document.getElementById('reset-view-button');
   const messageContainer = document.getElementById('message');
+  const markerToggleButton = document.getElementById('marker-toggle');
 
   // Mostra un messaggio iniziale
   if (messageContainer) {
@@ -94,4 +92,17 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
       resetView(resetOn);
     });
   }
+    // Listener per il bottone "Marker Toggle"
+    if (markerToggleButton) {
+      markerToggleButton.addEventListener('click', async () => {
+        console.log('Eseguendo il toggle dei marker...');
+        try {
+          const markerSettings = await fetchMarkerSettings();
+          console.log('Impostazioni dei marker:', markerSettings);
+          // Qui puoi aggiungere eventuali funzioni per gestire i marker con i dati ottenuti
+        } catch (error) {
+          console.error('Errore durante il fetch delle impostazioni dei marker:', error);
+        }
+      });
+    }
 });

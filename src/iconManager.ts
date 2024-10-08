@@ -12,90 +12,105 @@ function isRed(rgbArray: number[]): boolean {
   return r > g && r > b; // Rosso maggiore di verde e blu
 }
 
-export function createIcon(obj: any, dx: number, dy: number) {
+export function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
   let styles = 'font-size: 15px;';
 
   // Gestire la rotazione se dx e dy sono forniti e diversi da zero
   if (dx !== 0 || dy !== 0) {
-    styles += `transform: rotate(${(Math.atan2(dy, dx) * 180 / Math.PI) + 45}deg);`;
+      styles += `transform: rotate(${(Math.atan2(dy, dx) * 180 / Math.PI) + 45}deg);`;
   }
 
   // Condizionatamente impostare l'icona in base alle proprietà di obj
   let iconHtml = '';
-  if (obj.icon === 'Player' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛰️​</div>`;
-  } else if (obj.icon === 'Player' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛰️​</div>`;
-  } else if (obj.icon === 'HeavyTank' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚋</div>`;
-  } else if (obj.icon === 'HeavyTank' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚎</div>`;
-  } else if (obj.icon === 'TankDestroyer' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚓</div>`;
-  } else if (obj.icon === 'TankDestroyer' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚕</div>`;
-  } else if (obj.icon === 'SPAA' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">📡</div>`;
-  } else if (obj.icon === 'SPAA' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">📻</div>`;
-  } else if (obj.icon === 'LightTank' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚗</div>`;
-  } else if (obj.icon === 'LightTank' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚙</div>`;
-  } else if (obj.icon === 'MediumTank' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚚</div>`;
-  } else if (obj.icon === 'MediumTank' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚛</div>`;
-  } else if (obj.icon === 'Wheeled' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🏎️</div>`;
-  } else if (obj.icon === 'Wheeled' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛺</div>`;
-  } else if (obj.icon === 'Airdefence' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🚀</div>`;
-  } else if (obj.icon === 'Airdefence' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛡️</div>`;
-  } else if (obj.type === 'aircraft' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">✈️</div>`;
-  } else if (obj.type === 'aircraft' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛩️</div>`;
-  } else if (obj.type === 'airfield' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🟥</div>`;
-  } else if (obj.type === 'airfield' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🟩</div>`;
-  } else if (obj.type === 'respawn_base_tank' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">✴️</div>`;
-  } else if (obj.type === 'respawn_base_tank' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">❇️</div>`;
-  } else if (obj.icon === 'respawn_base_bomber' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🎊</div>`;
-  } else if (obj.icon === 'respawn_base_bomber' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🎇</div>`;
-  } else if (obj.icon === 'respawn_base_fighter' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🎈</div>`;
-  } else if (obj.icon === 'respawn_base_fighter' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🎐</div>`;
-  } else if (obj.type === 'capture_zone') {
-    iconHtml = `<svg width="15" height="15" style="${styles}"><circle cx="7.5" cy="7.5" r="7.5" fill="${obj.color}"/></svg>`;
-  } else if (obj.type === 'bombing_point' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">❌</div>`;
-  } else if (obj.type === 'defending_point' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">❎</div>`;
-  } else if (obj.icon === 'Ship' && isRed(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">⛵</div>`;
-  } else if (obj.icon === 'Ship' && isGreen(obj["color[]"])) {
-    iconHtml = `<div style="${styles}">🛶</div>`;
+
+  // Ottieni l'ID del marcatore
+  const markerId = generateMarkerId(obj, x, y);
+
+  switch (obj.icon) {
+      case 'Player':
+          iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">🛰️​</div>` : iconHtml;
+          break;
+      case 'HeavyTank':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚋</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🚎</div>` : iconHtml;
+          break;
+      case 'TankDestroyer':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚓</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🚕</div>` : iconHtml;
+          break;
+      case 'SPAA':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">📡</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">📻</div>` : iconHtml;
+          break;
+      case 'LightTank':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚗</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🚙</div>` : iconHtml;
+          break;
+      case 'MediumTank':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚚</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🚛</div>` : iconHtml;
+          break;
+      case 'Wheeled':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🏎️</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🛺</div>` : iconHtml;
+          break;
+      case 'Airdefence':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚀</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🛡️</div>` : iconHtml;
+          break;
+      case 'Ship':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">⛵</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🛶</div>` : iconHtml;
+          break;
+      case 'respawn_base_bomber':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🎊</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🎇</div>` : iconHtml;
+          break;
+      case 'respawn_base_fighter':
+          iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🎈</div>` :
+                     isGreen(obj["color[]"]) ? `<div style="${styles}">🎐</div>` : iconHtml;
+          break;
+      default:
+          // Gestione di altri tipi non specificati
+          switch (obj.type) {
+              case 'aircraft':
+                  iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">✈️</div>` :
+                             isRed(obj["color[]"]) ? `<div style="${styles}">🛩️</div>` : iconHtml;
+                  break;
+              case 'airfield':
+                  iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">🟩</div>` :
+                             isRed(obj["color[]"]) ? `<div style="${styles}">🟥</div>` : iconHtml;
+                  break;
+              case 'respawn_base_tank':
+                  iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">❇️</div>` :
+                             isRed(obj["color[]"]) ? `<div style="${styles}">✴️</div>` : iconHtml;
+                  break;
+              case 'capture_zone':
+                  iconHtml = `<svg width="15" height="15" style="${styles}"><circle cx="7.5" cy="7.5" r="7.5" fill="${obj.color}"/></svg>`;
+                  break;
+              case 'bombing_point':
+                  iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">❌</div>` : iconHtml;
+                  break;
+              case 'defending_point':
+                  iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">❎</div>` : iconHtml;
+                  break;
+              default:
+                  iconHtml = `<div style="${styles}">❓</div>`; // Fallback icon
+                  console.log(obj);
+                  break;
+          }
   }
 
   // Gestire il lampeggiamento se richiesto
   if (obj.blink) {
-    styles += 'animation: blink 1s infinite;';
-    iconHtml = `<div style="${styles}">${iconHtml}</div>`;
+      styles += 'animation: blink 1s infinite;';
+      iconHtml = `<div style="${styles}">${iconHtml}</div>`;
   }
 
   return L.divIcon({
-    html: iconHtml,
-    iconSize: [15, 15],
-    iconAnchor: [15, 15],
-    className: 'custom-div-icon'
+      html: iconHtml,
+      iconSize: [15, 15],
+      iconAnchor: [15, 15],
+      className: 'custom-div-icon',
   });
 }

@@ -1,35 +1,72 @@
 import * as L from 'leaflet';
 import { createIcon } from './iconManager';
 import { setPlayerPosition, addClickEvent } from './info';
+import { MapObject, Marker, MarkerId } from './types';
 import { _rel } from './utils';
+import axios from 'axios';
+import { processMarkers } from './filtro'; // Importa la funzione processMarkers
 
-/**
- * Aggiungi i marker alla mappa usando i dati scaricati e le impostazioni della mappa.
- * @param map L'oggetto della mappa Leaflet
- * @param mapObjects Gli oggetti marker scaricati
- * @param map_min Le coordinate minime della mappa
- * @param map_max Le coordinate massime della mappa
- */
+// Funzione per ottenere le impostazioni dei marker
+export async function fetchMarkerSettings(): Promise<Marker[]> {
+  try {
+    const response = await axios.get<MapObject[]>('/file/hud_type0.json'); // Supponendo che la risposta sia un array di oggetti
+    const mapObjects = response.data;
+
+    // Converti gli oggetti in Marker[]
+    const markers: Marker[] = mapObjects.map((obj) => {
+      let x = obj.x || 0;
+      let y = obj.y || 0;
+      let dx = obj.dx || 0;
+      let dy = obj.dy || 0;
+
+      // Se sono presenti le coordinate di inizio e fine, calcola i valori medi
+      if (obj.sx !== undefined && obj.sy !== undefined && obj.ex !== undefined && obj.ey !== undefined) {
+        const startX = obj.sx;
+        const startY = obj.sy;
+        const endX = obj.ex;
+        const endY = obj.ey;
+
+        x = (startX + endX) / 2;
+        y = (startY + endY) / 2;
+        dx = endX - startX;
+        dy = endY - startY;
+      }
+
+      // Crea l'oggetto Marker
+      const marker: Marker = {
+        x: x,
+        y: y,
+        dx: dx,
+        dy: dy,
+        'color[]': obj['color[]'] || [255, 255, 255], // Imposta un colore di default se non specificato
+        type: obj.type || 'default',
+        icon: obj.icon || 'default-icon',
+        id: '' // Placeholder, sarà gestito da processMarkers
+      };
+
+      return marker; // Ritorna il marker con le sue proprietà
+    });
+
+    // Passa i marker alla funzione processMarkers che assegna gli ID e confronta con i marker precedenti
+    const processedMarkers = processMarkers(markers);
+
+    // Puoi ritornare i marker se ti serve usarli in seguito
+    return processedMarkers;
+
+  } catch (error) {
+    console.error('Errore durante il fetch delle impostazioni dei marker:', error);
+    throw error;
+  }
+}
+
+
+
 export function addMapMarkers(map: L.Map, mapObjects: any[], map_min: number[], map_max: number[]): void {
   mapObjects.forEach((obj: any) => {
     let x = obj.x || 0;
     let y = obj.y || 0;
     let dx = obj.dx || 0;
     let dy = obj.dy || 0;
-
-    // Verifica se l'oggetto ha coordinate di inizio e fine, se sì calcola i valori medi
-    if (obj.sx !== undefined && obj.sy !== undefined && obj.ex !== undefined && obj.ey !== undefined) {
-      const startX = obj.sx;
-      const startY = obj.sy;
-      const endX = obj.ex;
-      const endY = obj.ey;
-
-      x = (startX + endX) / 2;
-      y = (startY + endY) / 2;
-
-      dx = endX - startX;
-      dy = endY - startY;
-    }
 
     // Converte le coordinate relative (0-1) in coordinate assolute basate su map_min e map_max
     const absX = _rel(x, map_min[0], map_max[0]); // Converte x in base a map_min e map_max
