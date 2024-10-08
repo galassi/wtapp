@@ -1,16 +1,36 @@
-import { stringArray } from './script'; // Assuming this is an array of strings (allies)
-import axios from 'axios';
+import { stringArray } from './script'; 
 import config from './config.json';
-import { ChatInfo } from './types';
 
-// Variabile per salvare gli ID già filtrati
+let isChatDataFetched = false;
+
+// Tipizzazione dei dati della chat
+type ChatEntry = {
+  id: number;
+  msg: string;
+  time: number;
+  damage?: any;
+};
+
+type OpponentData = {
+  allyDestroyed: boolean;
+  allyInfo?: {
+    ally: string;
+    allyVehicle: string;
+    action: string;
+  } | null;
+  opponent?: string | null;
+  opponentVehicle?: string | null;
+  target?: string | null;
+  targetVehicle?: string | null;
+  time: number;
+  event?: string;
+  vehicle?: string; 
+};
+
+// Variabili per il fetch della chat
 let filteredIds: Set<number> = new Set<number>();
-
-// Variabile per salvare i tempi (time) associati ai messaggi filtrati
 let filteredTimes: number[] = [];
-
-// Parole chiave per il filtro dei messaggi
-const keywordFilters: string[] = [
+const keywordFilters = [
   "pesantemente danneggiato",
   "schiantato",
   "ha abbattuto",
@@ -19,122 +39,129 @@ const keywordFilters: string[] = [
   "ha distrutto"
 ];
 
-let isChatDataFetched = false;
+let currentId = 0; // ID attuale
 
-// Variabile per l'ID attuale (da fornire dinamicamente, ad esempio dall'interfaccia utente)
-let currentId = 0; // Può essere aggiornato dinamicamente tramite interfaccia
-
-/**
- * Funzione per recuperare i dati della chat
- */
-export async function fetchChatData(): Promise<void> {
-  if (isChatDataFetched) return; // Prevent re-fetch
+export async function fetchChatData(): Promise<OpponentData[]> {
+  if (isChatDataFetched) {
+    return []; // Prevent re-fetch
+  }
   isChatDataFetched = true;
 
   try {
-    console.log('Recupero dati chat');
-    const chatInfoResponse = await axios.get<ChatInfo>(config.CHAT); // Using typed response
-    const chatInfo = chatInfoResponse.data;
+    const response = await fetch(config.CHAT);
+    
+    if (!response.ok) {
+      throw new Error('Errore nella rete: ' + response.statusText);
+    }
 
-    // Elaborazione dei dati della chat
+    const chatInfo = await response.json();
+
     if (chatInfo.damage && chatInfo.damage.length > 0) {
       const opponentData = extractOpponentData(chatInfo.damage, stringArray);
-      console.log(opponentData);
+      return opponentData;
     }
+
+    return [];
   } catch (error) {
     console.error('Errore durante il fetch dei dati della chat:', error);
+    return [];
   }
 }
 
-/**
- * Funzione per estrarre il nome e il veicolo dell'avversario e filtrare i messaggi
- * @param damageLog Array di log dei danni
- * @param allies Array di stringhe contenente i nomi degli alleati
- * @returns Array con i dati degli avversari o degli alleati distrutti
- */
-const extractOpponentData = (damageLog: ChatInfo['damage'], allies: string[]) => {
+// Funzione per estrarre i dati degli avversari
+const extractOpponentData = (damageLog: ChatEntry[], allies: string[]): OpponentData[] => {
   return damageLog
     .filter(entry => {
-      // Filtra l'ID se è maggiore dell'ID attuale
-      if (entry.id > currentId) {
-        return false;
-      }
+      if (entry.id <= currentId) return false;
+      if (filteredIds.has(entry.id)) return false;
 
-      // Controlla se l'ID è già stato filtrato
-      if (filteredIds.has(entry.id)) {
-        return false;
-      }
-
-      // Controlla se il messaggio contiene una delle parole chiave
       const containsKeyword = keywordFilters.some(keyword => entry.msg.includes(keyword));
 
       if (containsKeyword) {
-        // Salva l'ID per evitare di rifiltrarlo in futuro
         filteredIds.add(entry.id);
-
-        // Salva il valore di "time"
         filteredTimes.push(entry.time);
-
-        return true; // Mantieni questo elemento nel risultato
+        return true;
       }
 
-      return false; // Filtra via l'elemento se non contiene le parole chiave
+      return false;
     })
     .map(entry => {
-      // Regex per trovare attaccante e bersaglio dal messaggio di log
-      const regex = /([^\s()]+) \(([^)]+)\) ha .*? ([^\s()]+)? \(([^)]+)\)?/;
-      const match = entry.msg.match(regex);
+      let regex, match;
+
+      // Attaccante ha distrutto bersaglio
+      regex = /([^\s()]+) \(([^)]+)\) ha .*? ([^\s()]+)? \(([^)]+)\)?/;
+      match = entry.msg.match(regex);
 
       if (match) {
-        const attacker = match[1]; // Nome dell'attaccante
-        const attackerVehicle = match[2]; // Veicolo dell'attaccante
-        const target = match[3] || ''; // Nome del bersaglio (avversario), vuoto se non esiste
-        const targetVehicle = match[4] || ''; // Veicolo del bersaglio, vuoto se non esiste
+        const attacker = match[1];
+        const attackerVehicle = match[2];
+        const target = match[3] || '';
+        const targetVehicle = match[4] || '';
 
-        // Se l'attaccante o il bersaglio è un alleato, verifica se è stato abbattuto/distrutto
-        let isAllyDestroyed = false;
-        
-        // Define allyInfo type properly as an object or null
-        let allyInfo: { ally: string; allyVehicle: string; action: string } | null = null;
+        const isAllyDestroyed = allies.includes(attacker) || allies.includes(target);
 
-        if (allies.includes(attacker)) {
-          isAllyDestroyed = true;
-          allyInfo = { ally: attacker, allyVehicle: attackerVehicle, action: 'attaccato' };
-        } else if (allies.includes(target)) {
-          isAllyDestroyed = true;
-          allyInfo = { ally: target, allyVehicle: targetVehicle, action: 'bersaglio' };
-        }
-
-        // Restituisce i dati dell'avversario o dell'alleato
-        if (isAllyDestroyed) {
-          return {
-            allyDestroyed: true,
-            allyInfo,
-            time: entry.time
-          };
-        } else {
-          return {
-            opponent: attacker,
-            opponentVehicle: attackerVehicle,
-            time: entry.time
-          };
-        }
+        return {
+          allyDestroyed: isAllyDestroyed,
+          allyInfo: isAllyDestroyed ? { ally: attacker, allyVehicle: attackerVehicle, action: 'attaccato' } : null,
+          opponent: !isAllyDestroyed ? attacker : null,
+          opponentVehicle: !isAllyDestroyed ? attackerVehicle : null,
+          target: !isAllyDestroyed ? target : null,
+          targetVehicle: !isAllyDestroyed ? targetVehicle : null,
+          time: entry.time
+        };
       }
 
-      return null; // Restituisce null se non c'è match
+      // Caso: Veicolo si è schiantato
+      regex = /([^\s()]+) \(([^)]+)\) si è schiantato/;
+      match = entry.msg.match(regex);
+
+      if (match) {
+        const vehicle = match[2];
+        return {
+          event: 'schiantato',
+          vehicle,
+          time: entry.time
+        };
+      }
+
+      // Caso: Colpo finale
+      regex = /([^\s()]+) \(([^)]+)\) ha inflitto il colpo finale/;
+      match = entry.msg.match(regex);
+
+      if (match) {
+        const attacker = match[1];
+        const attackerVehicle = match[2];
+        return {
+          event: 'colpo_finale',
+          attacker,
+          attackerVehicle,
+          time: entry.time
+        };
+      }
+
+      // Caso: Veicolo distrutto senza attaccante
+      regex = /([^\s()]+) \(([^)]+)\) è stato distrutto/;
+      match = entry.msg.match(regex);
+
+      if (match) {
+        const target = match[1];
+        const targetVehicle = match[2];
+        const isAllyDestroyed = allies.includes(target);
+
+        return {
+          allyDestroyed: isAllyDestroyed,
+          target,
+          targetVehicle,
+          time: entry.time
+        };
+      }
+
+      return null; // Nessun pattern trovato
     })
-    .filter(item => item !== null); // Filtra i risultati nulli
+    .filter(item => item !== null) as OpponentData[]; // Filtra risultati nulli
 };
 
-// Funzione per resettare il set di filteredIds
+// Funzione per resettare filteredIds
 export function resetFilteredIds() {
-  filteredIds.clear(); // Reset filteredIds
-  filteredTimes = []; // Reset filtered times
-  console.log('filteredIds resettato a 0.');
+  filteredIds.clear();
 }
-
-// Aggiungi listener per il bottone "reset" se presente
-document.getElementById('reset-button')?.addEventListener('click', resetFilteredIds);
-
-// In un secondo momento, puoi accedere ai tempi filtrati così:
-console.log('Tempi filtrati:', filteredTimes);
