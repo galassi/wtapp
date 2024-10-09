@@ -2,15 +2,16 @@ import * as L from 'leaflet';
 import { createGrid } from './griglia';
 import axios from 'axios';
 import { MapInfo } from './types';
+import { markerLayer } from './iconManager';
 
-let mapInstance: L.Map | null = null;
+export let mapInstance: L.Map | null = null;
 let skyOverlay: L.ImageOverlay | null = null;
 let groundOverlay: L.ImageOverlay | null = null;
 let currentBounds: L.LatLngBounds | null = null;
 let skyGridParams: { gridZero: [number, number], gridSteps: [number, number], gridSize: [number, number] } | null = null;
 let groundGridParams: { gridZero: [number, number], gridSteps: [number, number], gridSize: [number, number] } | null = null;
-let skygrid=false;
-let groundgrid=false;
+let skygrid = false;
+let groundgrid = false;
 
 /* Inizializza la mappa con le impostazioni caricate dal file locale. */
 
@@ -44,8 +45,8 @@ export async function initializeMap(): Promise<L.Map> {
  * Carica i dati della mappa e crea l'overlay solo se non esiste.
  */
 export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
-   let url = mode === 'sky' ? '/file/hud_type0.json' : '/file/hud_type1.json';
-   let imageUrl = mode === 'sky' ? '/image/map0.jpg' : '/image/map1.jpg';
+  let url = mode === 'sky' ? '/file/hud_type0.json' : '/file/hud_type1.json';
+  let imageUrl = mode === 'sky' ? '/image/map0.jpg' : '/image/map1.jpg';
 
   console.log(`Inizializzando overlay per ${mode}...`);
 
@@ -59,6 +60,7 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
       // Crea l'overlay per il cielo solo se non esiste già
       if (skyOverlay) {
         mapInstance!.removeLayer(skyOverlay);
+        skyOverlay = null;  // Resetta l'overlay del cielo
       }
       skyOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 0 }); // Nascondi inizialmente
       skyOverlay.addTo(mapInstance!);
@@ -69,6 +71,7 @@ export async function loadOverlayAndBounds(mode: 'sky' | 'ground') {
       // Crea l'overlay per la terra solo se non esiste già
       if (groundOverlay) {
         mapInstance!.removeLayer(groundOverlay);
+        groundOverlay = null;  // Resetta l'overlay della terra
       }
       groundOverlay = L.imageOverlay(imageUrl, currentBounds!, { zIndex: 1 }); // Nascondi inizialmente
       groundOverlay.addTo(mapInstance!);
@@ -90,25 +93,25 @@ export function changeMapMode(mode: 'sky' | 'ground') {
     return;
   }
 
-  if (mode === 'sky'&&skyOverlay) {
+  if (mode === 'sky' && skyOverlay) {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
       console.log('Passato a modalità cielo. Adattato ai bounds del cielo.', currentBounds);
     }
-    if (skyGridParams&&!skygrid) {
+    if (skyGridParams && !skygrid) {
       createGrid(mapInstance!, skyGridParams.gridZero, skyGridParams.gridSteps, skyGridParams.gridSize);
-      skygrid=true;
+      skygrid = true;
       console.log('Griglia cielo creata.');
     }
-  } if (mode === 'ground'&&groundOverlay) {
+  } if (mode === 'ground' && groundOverlay) {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
       console.log('Passato a modalità terra. Adattato ai bounds della terra.', currentBounds);
     }
 
-    if (groundGridParams&&!groundgrid) {
+    if (groundGridParams && !groundgrid) {
       createGrid(mapInstance!, groundGridParams.gridZero, groundGridParams.gridSteps, groundGridParams.gridSize);
-      groundgrid=true;
+      groundgrid = true;
       console.log('Griglia terra creata.');
     }
   }
@@ -143,11 +146,11 @@ function setGrid(gridZero: [number, number], gridSteps: [number, number], gridSi
 /**
  * Funzione per resettare la mappa, rimuovere gli overlay e smontare completamente L.Map.
  */
-export async function resetView(resetOn:Boolean) {
+export async function resetView(resetOn) {
   // Invia una richiesta al server per cancellare i file mappa e JSON
   try {
     console.log('Richiesta di cancellazione dei file al server...');
-    resetOn=false;
+    resetOn = false;
     await axios.get('/api/delete-map');
     console.log('File cancellati correttamente.');
   } catch (error) {
@@ -160,6 +163,15 @@ export async function resetView(resetOn:Boolean) {
   }
 
   console.log('Reset della mappa in corso...');
+
+  // Rimuovi tutti i marker dalla mappa se esistono
+  if (markerLayer && mapInstance) {
+    console.log('Rimozione di tutti i marker dalla mappa...');
+    markerLayer.forEach((marker, id) => {
+      mapInstance?.removeLayer(marker);  // Usare optional chaining per evitare errori
+    });
+    markerLayer.clear();  // Svuota l'oggetto markerLayer per resettare i marker
+  }
 
   // Rimuovi gli overlay della mappa
   if (skyOverlay) {
@@ -178,13 +190,14 @@ export async function resetView(resetOn:Boolean) {
   console.log('Smontaggio completo della mappa...');
   mapInstance.remove();  // Rimuove la mappa dal DOM e pulisce tutte le risorse associate
   mapInstance = null;  // Resetta l'istanza della mappa
-  
+
   // Resetta anche i bounds e i parametri della griglia
   currentBounds = null;
   skyGridParams = null;
   groundGridParams = null;
-  skygrid=false;
-  groundgrid=false;
+  skygrid = false;
+  groundgrid = false;
 
   console.log('Reset completato.');
 }
+

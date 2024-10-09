@@ -1,18 +1,21 @@
-import * as L from 'leaflet';
-import { createIcon } from './iconManager';
 import { setPlayerPosition, addClickEvent } from './info';
 import { MapObject, Marker, MarkerId } from './types';
 import axios from 'axios';
 import { processMarkers } from './filtro'; // Importa la funzione processMarkers
-import { getMarkerBounds } from './mapManager';
+import { getMarkerBounds, mapInstance } from './mapManager';
+import { updateMarkers } from './iconManager';
+
+
 
 function _rel(rel: number, min: number, max: number): number {
   return min + rel * (max - min);
 }
+
+
 // Funzione per ottenere le impostazioni dei marker
 export async function fetchMarkerSettings(): Promise<Marker[]> {
   try {
-    const response = await axios.get<MapObject[]>('/file/hud_type0.json'); // Supponendo che la risposta sia un array di oggetti
+    const response = await axios.get<MapObject[]>('http://localhost:8111/map_obj.json'); // Supponendo che la risposta sia un array di oggetti
     const mapObjects = response.data;
 
     // Ottieni i bounds minimi e massimi
@@ -57,7 +60,6 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
         'color[]': obj['color[]'] || [255, 255, 255], // Imposta un colore di default se non specificato
         type: obj.type || 'default',
         icon: obj.icon || 'default-icon',
-        id: '' // Placeholder, sarà gestito da processMarkers
       };
 
       return marker; // Ritorna il marker con le sue proprietà
@@ -65,6 +67,14 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
 
     // Passa i marker alla funzione processMarkers che assegna gli ID e confronta con i marker precedenti
     const processedMarkers = processMarkers(markers);
+
+    // Controlla se la mappa è stata inizializzata correttamente
+    if (mapInstance) {
+      // Chiama la funzione updateMarkers e passa la mappa e i marker processati
+      updateMarkers(mapInstance, processedMarkers);
+    } else {
+      console.error('Mappa non inizializzata');
+    }
 
     // Puoi ritornare i marker se ti serve usarli in seguito
     return processedMarkers;
@@ -74,7 +84,3 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
     throw error;
   }
 }
-
-
-
-

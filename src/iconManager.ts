@@ -1,4 +1,8 @@
 import * as L from 'leaflet';
+import { Marker } from './types'; // Supponendo che tu abbia un tipo Marker definito in types.ts
+
+// Mappa per tenere traccia dei marker attualmente visualizzati
+export const markerLayer = new Map<number, L.Marker>();
 
 // Funzione per controllare se il colore è una tonalità di verde
 function isGreen(rgbArray: number[]): boolean {
@@ -12,7 +16,7 @@ function isRed(rgbArray: number[]): boolean {
     return r > g && r > b; // Rosso maggiore di verde e blu
 }
 
-export function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
+function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
     let styles = 'font-size: 15px;';
 
     // Gestire la rotazione se dx e dy sono forniti e diversi da zero
@@ -110,5 +114,39 @@ export function createIcon(obj: any, dx: number, dy: number, x: number, y: numbe
         iconSize: [15, 15],
         iconAnchor: [15, 15],
         className: 'custom-div-icon',
+    });
+}
+
+
+export function updateMarkers(map: L.Map, processedMarkers: Marker[]) {
+    const currentMarkerIds = new Set<number>();
+
+    // Ciclare su processedMarkers per creare o aggiornare le icone
+    processedMarkers.forEach((marker) => {
+        // Verifica che il marker abbia un ID definito
+        if (marker.id !== undefined) {
+            currentMarkerIds.add(marker.id);
+
+            if (markerLayer.has(marker.id)) {
+                // Se il marker esiste già, aggiorna solo la posizione
+                const existingMarker = markerLayer.get(marker.id);
+                existingMarker?.setLatLng([marker.y, marker.x]);
+            } else {
+                // Crea un nuovo marker e aggiungilo alla mappa
+                const icon = createIcon(marker, marker.dx, marker.dy, marker.x, marker.y);
+                const newMarker = L.marker([marker.y, marker.x], { icon }).addTo(map);
+                markerLayer.set(marker.id, newMarker);
+            }
+        } else {
+            console.warn(`Il marker non ha un ID valido: ${JSON.stringify(marker)}`);
+        }
+    });
+
+    // Smontare i marker non più presenti
+    markerLayer.forEach((existingMarker, id) => {
+        if (!currentMarkerIds.has(id)) {
+            map.removeLayer(existingMarker);
+            markerLayer.delete(id); // Rimuovi il marker dalla mappa e dalla mappa dei marker
+        }
     });
 }

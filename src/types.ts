@@ -50,11 +50,11 @@ export interface Marker {
   'color[]': number[];
   type: string;
   icon: string;
-  id:'';
+  id?:number;
 }
 
 export interface MarkerId {
-  id: string;
+  id: number;
   x: number;
   y: number;
 }
