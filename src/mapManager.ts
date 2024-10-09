@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import { createGrid } from './griglia';
 import axios from 'axios';
 import { MapInfo } from './types';
-import { markerLayer } from './iconManager';
+import { markerLayer, removeAllMarkers } from './iconManager';
 import { resetMarkers } from './filtro';
 
 export let mapInstance: L.Map | null = null;
@@ -105,7 +105,8 @@ export function changeMapMode(mode: 'sky' | 'ground') {
   if (mode === 'sky' && skyOverlay) {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
-      resetMarkers();  
+      resetMarkers(); 
+      removeAllMarkers(mapInstance); 
       console.log('Passato a modalità cielo. Adattato ai bounds del cielo.', currentBounds);
     }
     if (skyGridParams) {
@@ -116,6 +117,7 @@ export function changeMapMode(mode: 'sky' | 'ground') {
     if (currentBounds) {
       mapInstance.fitBounds(currentBounds);
       resetMarkers();  
+      removeAllMarkers(mapInstance);
       console.log('Passato a modalità terra. Adattato ai bounds della terra.', currentBounds);
     }
 
@@ -177,7 +179,7 @@ export async function resetView(resetOn:boolean) {
   if (markerLayer && mapInstance) {
     console.log('Rimozione di tutti i marker dalla mappa...');
     markerLayer.forEach((marker, id) => {
-      mapInstance?.removeLayer(marker);  // Usare optional chaining per evitare errori
+      marker.remove();  // Usare optional chaining per evitare errori
     });
     markerLayer.clear();  // Svuota l'oggetto markerLayer per resettare i marker
   }
@@ -207,5 +209,6 @@ export async function resetView(resetOn:boolean) {
   skyOverlay=null;
   groundOverlay=null;
   console.log('Reset completato.');
+
 }
 

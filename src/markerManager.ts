@@ -66,12 +66,12 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
     });
 
     // Passa i marker alla funzione processMarkers che assegna gli ID e confronta con i marker precedenti
-    const processedMarkers = processMarkers(markers);
+    const processedMarkers =await processMarkers(markers);
 
     // Controlla se la mappa è stata inizializzata correttamente
     if (mapInstance) {
       // Chiama la funzione updateMarkers e passa la mappa e i marker processati
-      updateMarkers(mapInstance, processedMarkers);
+      await updateMarkers(mapInstance, processedMarkers);
     } else {
       console.error('Mappa non inizializzata');
     }

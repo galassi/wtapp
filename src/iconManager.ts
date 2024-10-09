@@ -34,66 +34,71 @@ function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
             break;
         case 'HeavyTank':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚋</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🚎</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🚎</div>` : iconHtml;
             break;
         case 'TankDestroyer':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚓</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🚕</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🚕</div>` : iconHtml;
             break;
         case 'SPAA':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">📡</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">📻</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">📻</div>` : iconHtml;
             break;
         case 'LightTank':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚗</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🚙</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🚙</div>` : iconHtml;
             break;
         case 'MediumTank':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚚</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🚛</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🚛</div>` : iconHtml;
             break;
         case 'Wheeled':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🏎️</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🛺</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🛺</div>` : iconHtml;
             break;
         case 'Airdefence':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚀</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🛡️</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🛡️</div>` : iconHtml;
             break;
         case 'Ship':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">⛵</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🛶</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🛶</div>` : iconHtml;
             break;
         case 'respawn_base_bomber':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🎊</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🎇</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🎇</div>` : iconHtml;
             break;
         case 'respawn_base_fighter':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🎈</div>` :
-                       isGreen(obj["color[]"]) ? `<div style="${styles}">🎐</div>` : iconHtml;
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🎐</div>` : iconHtml;
             break;
-            case 'Structure':
-                iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🌋</div>` :
-                           isGreen(obj["color[]"]) ? `<div style="${styles}">🌄</div>` : iconHtml;
-                break;
-            
+        case 'Structure':
+            iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🌋</div>` :
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🌄</div>` : iconHtml;
+            break;
+        case 'missing':
+            iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">❗</div>` :
+                isGreen(obj["color[]"]) ? `<div style="${styles}">♻️</div>` : iconHtml;
+            break;
+
         default:
             // Gestione di altri tipi non specificati
             switch (obj.type) {
                 case 'aircraft':
                     iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">✈️</div>` :
-                               isRed(obj["color[]"]) ? `<div style="${styles}">🛩️</div>` : iconHtml;
+                        isRed(obj["color[]"]) ? `<div style="${styles}">🛩️</div>` : iconHtml;
                     break;
                 case 'airfield':
                     iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">🟩</div>` :
-                               isRed(obj["color[]"]) ? `<div style="${styles}">🟥</div>` : iconHtml;
+                        isRed(obj["color[]"]) ? `<div style="${styles}">🟥</div>` : iconHtml;
                     break;
                 case 'respawn_base_tank':
                     iconHtml = isGreen(obj["color[]"]) ? `<div style="${styles}">❇️</div>` :
-                               isRed(obj["color[]"]) ? `<div style="${styles}">✴️</div>` : iconHtml;
+                        isRed(obj["color[]"]) ? `<div style="${styles}">✴️</div>` : iconHtml;
                     break;
                 case 'capture_zone':
-                    iconHtml = `<svg width="15" height="15" style="${styles}"><circle cx="7.5" cy="7.5" r="7.5" fill="${obj.color}"/></svg>`;
+                    const color = rgbArrayToCss(obj["color[]"]);
+                    iconHtml = `<svg width="15" height="15" style="${styles}"><circle cx="7.5" cy="7.5" r="7.5" fill="${color}"/></svg>`;
                     break;
                 case 'bombing_point':
                     iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">❌</div>` : iconHtml;
@@ -124,35 +129,55 @@ function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
 
 
 export function updateMarkers(map: L.Map, processedMarkers: Marker[]) {
-    // Smonta tutti i marker attuali
+    // Rimuovi i marker esistenti
     markerLayer.forEach((existingMarker, id) => {
-        map.removeLayer(existingMarker);
+        if (existingMarker) {  // Check if existingMarker is defined
+            existingMarker.remove();  // Rimuovi correttamente dalla mappa
+        }
     });
-    markerLayer.clear(); // Svuota la mappa dei marker
+    markerLayer.clear();  // Pulisci markerLayer per evitare dati obsoleti
 
-    // Ciclare su processedMarkers per creare i nuovi marker
+    // Aggiungi nuovi marker alla mappa
     processedMarkers.forEach((marker) => {
-        // Verifica che il marker abbia un ID definito
+        // Assicurati che il marker abbia un ID valido
         if (marker.id !== undefined) {
-            // Crea un nuovo marker e aggiungilo alla mappa
             const icon = createIcon(marker, marker.dx, marker.dy, marker.x, marker.y);
             const newMarker = L.marker([marker.y, marker.x], { icon }).addTo(map);
-            markerLayer.set(marker.id, newMarker); // Aggiungi il marker alla mappa dei marker
+
+            // Rimuovi il vecchio marker se esiste prima di aggiungere il nuovo
+            if (markerLayer.has(marker.id)) {
+                const existingMarker = markerLayer.get(marker.id);
+                if (existingMarker) {  // Check if existingMarker is defined
+                    console.warn(`Marker con ID ${marker.id} esiste già. Rimuovo il vecchio.`);
+                    existingMarker.remove();  // Rimuovi dalla mappa
+                    markerLayer.delete(marker.id);  // Rimuovi da markerLayer
+                }
+            }
+
+            // Aggiungi il nuovo marker a markerLayer
+            markerLayer.set(marker.id, newMarker);
         } else {
             console.warn(`Il marker non ha un ID valido: ${JSON.stringify(marker)}`);
         }
     });
 }
 
-export function removeAllMarkers(mapInstance: L.Map, markerLayer: Map<number, L.Marker>) {
+
+
+export function removeAllMarkers(mapInstance: L.Map) {
     if (markerLayer && mapInstance) {
-      console.log('Rimozione di tutti i marker dalla mappa...');
-      
-      markerLayer.forEach((marker, id) => {
-        mapInstance.removeLayer(marker);  // Rimuovi ogni marker dalla mappa
-      });
-  
-      markerLayer.clear();  // Svuota l'oggetto markerLayer per resettare i marker
+        console.log('Rimozione di tutti i marker dalla mappa...');
+        markerLayer.forEach((marker, id) => {
+            mapInstance.removeLayer(marker);
+        });
+
+        markerLayer.clear();  // Svuota l'oggetto markerLayer per resettare i marker
     }
-  }
-   
+}
+
+function rgbArrayToCss(colorArray: number[]): string {
+    if (Array.isArray(colorArray) && colorArray.length === 3) {
+        return `rgb(${colorArray[0]}, ${colorArray[1]}, ${colorArray[2]})`;
+    }
+    return 'black'; // Fallback in caso di errore
+}

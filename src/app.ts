@@ -1,10 +1,15 @@
-import { initializeMap, changeMapMode, loadOverlayAndBounds, resetView } from './mapManager';
+import { initializeMap, changeMapMode, loadOverlayAndBounds, resetView, mapInstance } from './mapManager';
 import { fetchMarkerSettings } from './markerManager';
 import { fetchChatData } from './chat';
 import axios from 'axios';
+import { resetMarkers } from './filtro';
+import { removeAllMarkers } from './iconManager';
 
 let isLoading = false;
 let resetOn = false;
+let aremarkerloading = false;
+let intervalId: number | undefined;
+let areMarkersLoading = false; // Flag per tenere traccia dello stato
 
 // Imposta il timeout di Axios se necessario
 axios.defaults.timeout = 10000; // 10 secondi
@@ -23,9 +28,9 @@ async function init(mode: 'sky' | 'ground') {
     await axios.get(`/api/download-map?mode=${mode}`);
 
     // Inizializza la mappa solo se non è già esistente
-      await initializeMap();  // Controlla internamente se mapInstance esiste già
+    await initializeMap();  // Controlla internamente se mapInstance esiste già
     // Carica l'overlay e i bounds in base alla modalità selezionata
-      await loadOverlayAndBounds(mode);
+    await loadOverlayAndBounds(mode);
     console.log('Mappa inizializzata correttamente.');
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
     await init(mode);  // Chiama init una sola volta per inizializzare la mappa
 
     // Cambia la modalità della mappa
-      await changeMapMode(mode);
+    await changeMapMode(mode);
   }
 
   // Listener per il bottone "Cielo"
@@ -85,24 +90,45 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   }
 
   // Listener per il bottone "Reset"
-  if (resetButton&&!resetOn) {
+  if (resetButton && !resetOn) {
     resetButton.addEventListener('click', () => {
       resetOn = true;
       console.log('Resettando la vista e cancellando i file...');
       resetView(resetOn);
     });
   }
-    // Listener per il bottone "Marker Toggle"
-    if (markerToggleButton) {
-      markerToggleButton.addEventListener('click', async () => {
-        console.log('Eseguendo il toggle dei marker...');
-        try {
-          const markerSettings = await fetchMarkerSettings();
-          console.log('Impostazioni dei marker:', markerSettings);
-          // Qui puoi aggiungere eventuali funzioni per gestire i marker con i dati ottenuti
-        } catch (error) {
-          console.error('Errore durante il fetch delle impostazioni dei marker:', error);
+
+  // Listener per il bottone "Marker Toggle"
+  if (markerToggleButton) {
+    markerToggleButton.addEventListener('click', async () => {
+      if (!areMarkersLoading) {
+        // Inizia il ciclo di fetch ogni 0.5 secondi
+        console.log('Avviando il ciclo di fetch dei marker...');
+        areMarkersLoading = true;
+
+        // Avvia il fetchMarkerSettings ogni 0.5 secondi
+        intervalId = window.setInterval(async () => {
+          try {
+            await fetchMarkerSettings();
+            console.log('Fetch dei marker completato.');
+            // Aggiungi qui eventuali funzioni per gestire i marker con i dati ottenuti
+          } catch (error) {
+            console.error('Errore durante il fetch delle impostazioni dei marker:', error);
+          }
+        }, 500); // 500 ms = 0.5 secondi
+      } else {
+        // Se il ciclo è già in esecuzione, fermalo e resetta i valori
+        console.log('Arrestando il ciclo di fetch dei marker...');
+        areMarkersLoading = false;
+
+        if (intervalId) {
+          clearInterval(intervalId); // Ferma l'esecuzione ripetuta
+          intervalId = undefined;
         }
-      });
-    }
+        if(mapInstance)
+        await removeAllMarkers(mapInstance);
+        await resetMarkers();
+      }
+    })
+  }
 });

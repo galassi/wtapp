@@ -83,8 +83,7 @@ export function processMarkers(newMarkers: Marker[]): Marker[] {
   });
 
   // Rimuovi i marker che non vengono trovati per 10 iterazioni consecutive
-  previousMarkers = previousMarkers.filter(marker => marker.notFoundCount! < 5);
-
+  previousMarkers = previousMarkers.filter(marker => marker.notFoundCount! < 10);
   // Aggiungi i marker elaborati alla lista precedente per il prossimo confronto
   previousMarkers = [...previousMarkers, ...processedMarkers.filter(marker => marker.id !== undefined)];
 
