@@ -72,6 +72,11 @@ function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🎈</div>` :
                        isGreen(obj["color[]"]) ? `<div style="${styles}">🎐</div>` : iconHtml;
             break;
+            case 'Structure':
+                iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🌋</div>` :
+                           isGreen(obj["color[]"]) ? `<div style="${styles}">🌄</div>` : iconHtml;
+                break;
+            
         default:
             // Gestione di altri tipi non specificati
             switch (obj.type) {
@@ -119,34 +124,35 @@ function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
 
 
 export function updateMarkers(map: L.Map, processedMarkers: Marker[]) {
-    const currentMarkerIds = new Set<number>();
+    // Smonta tutti i marker attuali
+    markerLayer.forEach((existingMarker, id) => {
+        map.removeLayer(existingMarker);
+    });
+    markerLayer.clear(); // Svuota la mappa dei marker
 
-    // Ciclare su processedMarkers per creare o aggiornare le icone
+    // Ciclare su processedMarkers per creare i nuovi marker
     processedMarkers.forEach((marker) => {
         // Verifica che il marker abbia un ID definito
         if (marker.id !== undefined) {
-            currentMarkerIds.add(marker.id);
-
-            if (markerLayer.has(marker.id)) {
-                // Se il marker esiste già, aggiorna solo la posizione
-                const existingMarker = markerLayer.get(marker.id);
-                existingMarker?.setLatLng([marker.y, marker.x]);
-            } else {
-                // Crea un nuovo marker e aggiungilo alla mappa
-                const icon = createIcon(marker, marker.dx, marker.dy, marker.x, marker.y);
-                const newMarker = L.marker([marker.y, marker.x], { icon }).addTo(map);
-                markerLayer.set(marker.id, newMarker);
-            }
+            // Crea un nuovo marker e aggiungilo alla mappa
+            const icon = createIcon(marker, marker.dx, marker.dy, marker.x, marker.y);
+            const newMarker = L.marker([marker.y, marker.x], { icon }).addTo(map);
+            markerLayer.set(marker.id, newMarker); // Aggiungi il marker alla mappa dei marker
         } else {
             console.warn(`Il marker non ha un ID valido: ${JSON.stringify(marker)}`);
         }
     });
-
-    // Smontare i marker non più presenti
-    markerLayer.forEach((existingMarker, id) => {
-        if (!currentMarkerIds.has(id)) {
-            map.removeLayer(existingMarker);
-            markerLayer.delete(id); // Rimuovi il marker dalla mappa e dalla mappa dei marker
-        }
-    });
 }
+
+export function removeAllMarkers(mapInstance: L.Map, markerLayer: Map<number, L.Marker>) {
+    if (markerLayer && mapInstance) {
+      console.log('Rimozione di tutti i marker dalla mappa...');
+      
+      markerLayer.forEach((marker, id) => {
+        mapInstance.removeLayer(marker);  // Rimuovi ogni marker dalla mappa
+      });
+  
+      markerLayer.clear();  // Svuota l'oggetto markerLayer per resettare i marker
+    }
+  }
+   

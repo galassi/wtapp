@@ -83,10 +83,17 @@ export function processMarkers(newMarkers: Marker[]): Marker[] {
   });
 
   // Rimuovi i marker che non vengono trovati per 10 iterazioni consecutive
-  previousMarkers = previousMarkers.filter(marker => marker.notFoundCount! < 10);
+  previousMarkers = previousMarkers.filter(marker => marker.notFoundCount! < 5);
 
   // Aggiungi i marker elaborati alla lista precedente per il prossimo confronto
   previousMarkers = [...previousMarkers, ...processedMarkers.filter(marker => marker.id !== undefined)];
 
   return processedMarkers;
+}
+
+// Funzione per resettare tutti i marker
+export function resetMarkers() {
+  previousMarkers = []; // Svuota l'array dei marker esistenti
+  currentMarkerId = 1;  // Resetta l'ID dei marker al valore iniziale
+  console.log('I marker sono stati resettati.');
 }
