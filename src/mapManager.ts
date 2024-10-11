@@ -4,6 +4,7 @@ import axios from 'axios';
 import { MapInfo } from './types';
 import { markerLayer, removeAllMarkers } from './iconManager';
 import { resetMarkers } from './filtro';
+import { addMapClickEvent } from './info'; // Importa la funzione per gestire i click
 
 export let mapInstance: L.Map | null = null;
 let skyOverlay: L.ImageOverlay | null = null;
@@ -16,7 +17,6 @@ let groundgrid = false;
 
 
 /* Inizializza la mappa con le impostazioni caricate dal file locale. */
-
 export async function initializeMap(): Promise<L.Map> {
   const mapInnerContainer = document.getElementById('map-inner');
 
@@ -40,6 +40,10 @@ export async function initializeMap(): Promise<L.Map> {
   });
 
   console.log('Mappa creata senza overlay iniziali.');
+
+  // Aggiungi l'evento di click per il calcolo della distanza
+  addMapClickEvent(mapInstance); // Aggiungiamo l'evento click sulla mappa
+  
   return mapInstance;
 }
 
