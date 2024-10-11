@@ -1,26 +1,18 @@
 import { Marker } from './types';
 
-interface ExtendedMarker extends Marker {
-  notFoundCount?: number; // Contatore per i marker non trovati
-}
-
-let previousMarkers: ExtendedMarker[] = []; // Array che contiene i marker già esistenti
-let currentMarkerId = 1; // Inizia da 1 o da qualsiasi valore iniziale
+// Utilizzo di una mappa per gestire i marker esistenti per una ricerca più efficiente
+let previousMarkers: Map<number, Marker> = new Map();
+let currentMarkerId = 1; // Contatore iniziale per generare ID
+let removedIds: Set<number> = new Set(); // Set per tracciare gli ID rimossi
 
 // Funzione per ottenere un ID unico per i nuovi marker
-function getMarkerId(newMarker: Marker): number {
-  // Trova l'ID minimo disponibile che non è già utilizzato nei marker esistenti
-  while (previousMarkers.some(marker => marker.id === currentMarkerId)) {
-    currentMarkerId++; // Incrementa fino a trovare un ID non utilizzato
+function getMarkerId(): number {
+  // Non riutilizzare immediatamente gli ID rimossi
+  let newId = currentMarkerId++;
+  while (previousMarkers.has(newId) || removedIds.has(newId)) {
+    newId = currentMarkerId++;
   }
-  
-  return currentMarkerId++; // Restituisci l'ID e incrementa per il prossimo
-}
-
-// Funzione per confrontare due array di numeri
-function arraysEqual(a: number[], b: number[]): boolean {
-  if (a.length !== b.length) return false;
-  return a.every((value, index) => value === b[index]);
+  return newId;
 }
 
 // Funzione per calcolare la distanza euclidea tra due punti
@@ -29,70 +21,68 @@ function euclideanDistance(x1: number, y1: number, x2: number, y2: number): numb
 }
 
 // Funzione per trovare il marker più vicino con gli stessi attributi
-function findClosestMarker(newMarker: Marker): ExtendedMarker | undefined {
-  let closestMarker: ExtendedMarker | undefined;
+function findClosestMarker(newMarker: Marker, availableMarkers: Marker[]): Marker | undefined {
+  let closestMarker: Marker | undefined;
   let minDistance = Infinity;
 
-  previousMarkers.forEach(existingMarker => {
-    // Controlla se i tipi, l'icona e il colore sono uguali
-    if (
-      existingMarker.type === newMarker.type &&
-      existingMarker.icon === newMarker.icon &&
-      arraysEqual(existingMarker['color[]'], newMarker['color[]'])
-    ) {
-      // Calcola la distanza euclidea
-      const distance = euclideanDistance(existingMarker.x, existingMarker.y, newMarker.x, newMarker.y);
-      // Se la distanza è minore dell'attuale distanza minima, aggiorna il marker più vicino
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestMarker = existingMarker;
-      }
+  availableMarkers.forEach(existingMarker => {
+    const distance = euclideanDistance(existingMarker.x, existingMarker.y, newMarker.x, newMarker.y);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestMarker = existingMarker;
     }
   });
 
-  return closestMarker; // Restituisci il marker più vicino con attributi corrispondenti
+  return closestMarker;
+}
+
+// Funzione per rimuovere un marker e tracciare l'ID come rimosso
+function removeMarker(id: number) {
+  if (previousMarkers.has(id)) {
+    previousMarkers.delete(id);
+    removedIds.add(id); // Aggiungi l'ID alla lista degli ID rimossi
+  }
 }
 
 // Funzione per confrontare i nuovi marker con quelli esistenti
-export function processMarkers(newMarkers: Marker[]): Marker[] {
-  const processedMarkers: Marker[] = newMarkers.map(newMarker => {
-    // Trova il marker più vicino con gli stessi attributi
-    const closestMarker = findClosestMarker(newMarker);
+export async function processMarkers(newMarkers: Marker[]): Promise<Marker[]> {
+  const processedMarkers: Marker[] = [];
+  const matchedMarkerIds = new Set<number>();
+  const availableMarkers = Array.from(previousMarkers.values());
+
+  newMarkers.forEach(newMarker => {
+    const closestMarker = findClosestMarker(newMarker, availableMarkers.filter(marker => !matchedMarkerIds.has(marker.id!)));
 
     if (closestMarker) {
-      // Mantieni l'ID del marker più vicino e resetta il contatore
-      newMarker.id = closestMarker.id;
-      closestMarker.notFoundCount = 0; // Reset del contatore poiché è stato trovato
+      newMarker.id = closestMarker.id; // Aggiorna il nuovo marker con l'ID esistente
+      matchedMarkerIds.add(closestMarker.id!); // Traccia l'ID come abbinato
     } else {
-      // Se non c'è un marker esistente, assegna un nuovo ID
-      newMarker.id = getMarkerId(newMarker);
+      newMarker.id = getMarkerId(); // Assegna un nuovo ID se non c'è un match
     }
 
-    return newMarker; // Ritorna il marker con l'ID aggiornato
+    processedMarkers.push(newMarker);
   });
 
-  // Aumenta il contatore per i marker che non sono più presenti
-  previousMarkers.forEach(existingMarker => {
-    const stillExists = newMarkers.some(newMarker => 
-      existingMarker.id === newMarker.id
-    );
-
-    if (!stillExists) {
-      existingMarker.notFoundCount = (existingMarker.notFoundCount || 0) + 1; // Incrementa il contatore
+  // Rimuovi i marker vecchi non trovati tra i nuovi
+  previousMarkers.forEach((existingMarker, id) => {
+    if (!matchedMarkerIds.has(id)) {
+      removeMarker(id);
     }
   });
 
-  // Rimuovi i marker che non vengono trovati per 10 iterazioni consecutive
-  previousMarkers = previousMarkers.filter(marker => marker.notFoundCount! < 10);
-  // Aggiungi i marker elaborati alla lista precedente per il prossimo confronto
-  previousMarkers = [...previousMarkers, ...processedMarkers.filter(marker => marker.id !== undefined)];
+  // Aggiorna o aggiungi i nuovi marker nel set dei marker precedenti
+  processedMarkers.forEach(newMarker => {
+    previousMarkers.set(newMarker.id!, newMarker);
+  });
 
-  return processedMarkers;
+  return processedMarkers; // I marker processati verranno gestiti da markermanager.ts
 }
+
 
 // Funzione per resettare tutti i marker
 export function resetMarkers() {
-  previousMarkers = []; // Svuota l'array dei marker esistenti
-  currentMarkerId = 1;  // Resetta l'ID dei marker al valore iniziale
-  console.log('I marker sono stati resettati.');
+  previousMarkers.clear();
+  currentMarkerId = 1;
+  removedIds.clear(); // Resetta anche gli ID rimossi
+  ('I marker sono stati resettati.');
 }

@@ -58,3 +58,7 @@ export interface MarkerId {
   x: number;
   y: number;
 }
+
+export interface ExtendedMarker extends Marker {
+  notFoundCount?: number;
+}

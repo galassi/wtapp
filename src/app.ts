@@ -2,7 +2,7 @@ import { initializeMap, changeMapMode, loadOverlayAndBounds, resetView, mapInsta
 import { fetchMarkerSettings } from './markerManager';
 import { fetchChatData } from './chat';
 import axios from 'axios';
-import { resetMarkers } from './filtro';
+import { processMarkers, resetMarkers } from './filtro';
 import { removeAllMarkers } from './iconManager';
 
 let isLoading = false;
@@ -99,36 +99,40 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   }
 
   // Listener per il bottone "Marker Toggle"
-  if (markerToggleButton) {
-    markerToggleButton.addEventListener('click', async () => {
-      if (!areMarkersLoading) {
-        // Inizia il ciclo di fetch ogni 0.5 secondi
-        console.log('Avviando il ciclo di fetch dei marker...');
-        areMarkersLoading = true;
+if (markerToggleButton) {
+  markerToggleButton.addEventListener('click', async () => {
+    if (!areMarkersLoading) {
+      // Inizia il ciclo di fetch ogni 0.5 secondi
+      console.log('Avviando il ciclo di fetch dei marker...');
+      areMarkersLoading = true;
 
-        // Avvia il fetchMarkerSettings ogni 0.5 secondi
-        intervalId = window.setInterval(async () => {
-          try {
-            await fetchMarkerSettings();
-            console.log('Fetch dei marker completato.');
-            // Aggiungi qui eventuali funzioni per gestire i marker con i dati ottenuti
-          } catch (error) {
-            console.error('Errore durante il fetch delle impostazioni dei marker:', error);
-          }
-        }, 500); // 500 ms = 0.5 secondi
-      } else {
-        // Se il ciclo è già in esecuzione, fermalo e resetta i valori
-        console.log('Arrestando il ciclo di fetch dei marker...');
-        areMarkersLoading = false;
-
-        if (intervalId) {
-          clearInterval(intervalId); // Ferma l'esecuzione ripetuta
-          intervalId = undefined;
+      // Avvia il fetchMarkerSettings ogni 0.5 secondi
+      intervalId = window.setInterval(async () => {
+        try {
+          await fetchMarkerSettings();
+        } catch (error) {
+          console.error('Errore durante il fetch delle impostazioni dei marker:', error);
         }
-        if(mapInstance)
-        await removeAllMarkers(mapInstance);
-        await resetMarkers();
+      }, 1000); // 1000 ms = 1 secondi
+
+    } else {
+      // Se il ciclo è già in esecuzione, fermalo e resetta i valori
+      console.log('Arrestando il ciclo di fetch dei marker...');
+      areMarkersLoading = false;
+
+      // Ferma il ciclo di fetch dei marker
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId);
+        console.log('Fetching dei marker fermato.');
+        intervalId = undefined;
       }
-    })
-  }
+
+      // Rimuovi i marker e resettali solo se la mappa esiste
+      if (mapInstance) {
+        await removeAllMarkers(mapInstance);
+      }
+      await resetMarkers();
+    }
+  });
+}
 });

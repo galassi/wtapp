@@ -1,16 +1,15 @@
-import { setPlayerPosition, addClickEvent } from './info';
+import { setPlayerPosition } from './info';
 import { MapObject, Marker, MarkerId } from './types';
-import axios from 'axios';
 import { processMarkers } from './filtro'; // Importa la funzione processMarkers
 import { getMarkerBounds, mapInstance } from './mapManager';
 import { updateMarkers } from './iconManager';
-
-
+import * as L from 'leaflet';
+import axios from 'axios';
 
 function _rel(rel: number, min: number, max: number): number {
   return min + rel * (max - min);
 }
-
+export let iterationCount = 0; // Contatore globale delle iterazioni
 
 // Funzione per ottenere le impostazioni dei marker
 export async function fetchMarkerSettings(): Promise<Marker[]> {
@@ -50,6 +49,10 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
       const correctedY = 1 - y; // Corregge l'asse Y (inversione)
       y = _rel(correctedY, map_min[1], map_max[1]); // Converte y in base a map_min e map_max
 
+      if (obj.icon === 'Player') {
+        const playerLatLng = L.latLng(y, x); // Crea un oggetto LatLng
+        setPlayerPosition(playerLatLng);
+      }
 
       // Crea l'oggetto Marker
       const marker: Marker = {
@@ -65,22 +68,28 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
       return marker; // Ritorna il marker con le sue proprietà
     });
 
-    // Passa i marker alla funzione processMarkers che assegna gli ID e confronta con i marker precedenti
-    const processedMarkers =await processMarkers(markers);
+    // Incrementa il contatore delle iterazioni
+    iterationCount++;
 
-    // Controlla se la mappa è stata inizializzata correttamente
+    // Passa i marker alla funzione processMarkers e attendi il completamento prima di procedere con updateMarkers
+    const processedMarkers = await processMarkers(markers);
+
     if (mapInstance) {
-      // Chiama la funzione updateMarkers e passa la mappa e i marker processati
+      // Esegui updateMarkers solo dopo il completamento di processMarkers
       await updateMarkers(mapInstance, processedMarkers);
     } else {
       console.error('Mappa non inizializzata');
     }
 
-    // Puoi ritornare i marker se ti serve usarli in seguito
     return processedMarkers;
-
   } catch (error) {
     console.error('Errore durante il fetch delle impostazioni dei marker:', error);
     throw error;
   }
+}
+
+// Funzione per resettare il contatore delle iterazioni, se necessario
+export function resetIterationCount() {
+  iterationCount = 0;
+  console.log('Contatore delle iterazioni resettato.');
 }

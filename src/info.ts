@@ -7,21 +7,20 @@ export function setPlayerPosition(latLng: L.LatLng) {
   playerPosition = latLng;
 }
 
-// Funzione per aggiungere l'evento di click e calcolare la distanza
-export function addClickEvent(marker: L.Marker, absY: number, absX: number) {
-  marker.on('click', () => {
+// Funzione per aggiungere l'evento di click su tutta la mappa e calcolare la distanza
+export function addMapClickEvent(map: L.Map) {
+  map.on('click', (e: L.LeafletMouseEvent) => {
     if (playerPosition) {
-      const markerLatLng = L.latLng(absY, absX);
+      const clickedLatLng = e.latlng; // Ottieni la posizione cliccata sulla mappa
 
-      // Calcola la distanza euclidea (no curva della Terra)
-      const distance = Math.sqrt(
-        Math.pow(markerLatLng.lat - playerPosition.lat, 2) + 
-        Math.pow(markerLatLng.lng - playerPosition.lng, 2)
-      );
+      // Calcola la distanza euclidea (ignorando la curvatura terrestre)
+      const deltaLat = clickedLatLng.lat - playerPosition.lat;
+      const deltaLng = clickedLatLng.lng - playerPosition.lng;
+      const distance = Math.sqrt(deltaLat * deltaLat + deltaLng * deltaLng);
 
       const distanceElement = document.getElementById('distance');
       if (distanceElement) {
-        distanceElement.innerText = `${distance.toFixed(2)} unità`; // Adatta l'unità di misura alle coordinate della tua mappa
+        distanceElement.innerText = `${distance.toFixed(2)} unità`; // Modifica 'unità' in base al sistema di coordinate che usi
       }
     } else {
       console.error('Posizione del giocatore non trovata!');
