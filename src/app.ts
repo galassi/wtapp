@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function onLoaded() {
   const resetButton = document.getElementById('reset-view-button');
   const messageContainer = document.getElementById('message');
   const markerToggleButton = document.getElementById('marker-toggle');
+  const chatToggleButton = document.getElementById('chat-toggle');
 
   // Mostra un messaggio iniziale
   if (messageContainer) {
@@ -135,4 +136,23 @@ if (markerToggleButton) {
     }
   });
 }
+
+ if (chatToggleButton) {
+  chatToggleButton.addEventListener('click', async () => {
+    console.log('Toggling chat...');
+    
+    try {
+      // Richiama la funzione fetchChatData per ottenere i dati della chat
+      const chatData = await fetchChatData();
+
+      // Se necessario, puoi aggiornare la UI o fare altre operazioni con i dati ricevuti
+      console.log('Chat data fetched successfully:', chatData);
+
+      // Aggiungi qui ulteriori operazioni sulla chat o aggiorna l'interfaccia utente
+    } catch (error) {
+      console.error('Errore durante il fetch dei dati della chat:', error);
+    }
+  });
+}
+
 });

@@ -48,7 +48,7 @@ export async function fetchChatData(): Promise<OpponentData[]> {
   isChatDataFetched = true;
 
   try {
-    const response = await fetch(config.CHAT);
+    const response = await fetch('/file/hudmsg.json');
     
     if (!response.ok) {
       throw new Error('Errore nella rete: ' + response.statusText);
@@ -72,9 +72,9 @@ export async function fetchChatData(): Promise<OpponentData[]> {
 const extractOpponentData = (damageLog: ChatEntry[], allies: string[]): OpponentData[] => {
   return damageLog
     .filter(entry => {
-      if (entry.id <= currentId) return false;
+      //if (entry.id <= currentId) return false; //verificare se superfluo
       if (filteredIds.has(entry.id)) return false;
-
+      
       const containsKeyword = keywordFilters.some(keyword => entry.msg.includes(keyword));
 
       if (containsKeyword) {
