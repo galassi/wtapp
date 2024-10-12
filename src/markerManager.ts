@@ -49,10 +49,7 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
       const correctedY = 1 - y; // Corregge l'asse Y (inversione)
       y = _rel(correctedY, map_min[1], map_max[1]); // Converte y in base a map_min e map_max
 
-      if (obj.icon === 'Player') {
-        const playerLatLng = L.latLng(y, x); // Crea un oggetto LatLng
-        setPlayerPosition(playerLatLng);
-      }
+
 
       // Crea l'oggetto Marker
       const marker: Marker = {
@@ -65,6 +62,11 @@ export async function fetchMarkerSettings(): Promise<Marker[]> {
         icon: obj.icon || 'default-icon',
       };
 
+      if (obj.icon === 'Player') {
+        const playerLatLng = L.latLng(y, x); // Crea un oggetto LatLng
+        setPlayerPosition(playerLatLng);
+      }
+      
       return marker; // Ritorna il marker con le sue proprietà
     });
 

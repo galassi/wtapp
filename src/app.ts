@@ -113,7 +113,7 @@ if (markerToggleButton) {
         } catch (error) {
           console.error('Errore durante il fetch delle impostazioni dei marker:', error);
         }
-      }, 1000); // 1000 ms = 1 secondi
+      }, 1000); // 500 ms = 1 secondi
 
     } else {
       // Se il ciclo è già in esecuzione, fermalo e resetta i valori
