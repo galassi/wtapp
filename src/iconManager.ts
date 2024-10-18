@@ -47,6 +47,10 @@ function createIcon(obj: any, dx: number, dy: number, x: number, y: number) {
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">🚓</div>` :
                 isGreen(obj["color[]"]) ? `<div style="${styles}">🚕</div>` : iconHtml;
             break;
+        case 'Ground':
+            iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">👚</div>` :
+                isGreen(obj["color[]"]) ? `<div style="${styles}">🧥</div>` : iconHtml;
+            break;
         case 'SPAA':
             iconHtml = isRed(obj["color[]"]) ? `<div style="${styles}">📡</div>` :
                 isGreen(obj["color[]"]) ? `<div style="${styles}">📻</div>` : iconHtml;
@@ -139,8 +143,8 @@ export function updateMarkers(map: L.Map, processedMarkers: Marker[]) {
     // Rimuovi i marker dalla mappa che non sono più presenti in `processedMarkers`
     markerLayer.forEach((existingMarker, id) => {
         const markerExistsInProcessed = processedMarkers.some(marker => marker.id === id);
-        
-        if (!markerExistsInProcessed) {          
+
+        if (!markerExistsInProcessed) {
             // Il marker non è presente tra i nuovi, modifichiamo solo gli attributi necessari a 'missing'
             const previousMarker = previousMarkers.get(id); // Prendi il marker vecchio con tutti gli attributi
             if (previousMarker) {
@@ -158,7 +162,7 @@ export function updateMarkers(map: L.Map, processedMarkers: Marker[]) {
 
                 // Aggiorna l'oggetto nel markerLayer con i nuovi attributi
                 markerLayer.set(id, Object.assign(existingMarker, { type: 'missing', missingCount: (existingMarker as any).missingCount || 0 }));
-            } 
+            }
         }
     });
 
