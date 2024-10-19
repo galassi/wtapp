@@ -14,6 +14,10 @@ function updateTableDisplay(): void {
 // Get elements and ensure they are of the correct type
 const submitButton = document.querySelector('#submit-button') as HTMLButtonElement | null;
 const inputField = document.querySelector('#input-field') as HTMLInputElement | null;
+const resetButton = document.querySelector('#reset-button') as HTMLButtonElement | null;
+
+// Import fetchChatData and resetFilteredIds from chat.ts
+import { fetchChatData, resetFilteredIds } from './chat';
 
 if (submitButton && inputField) {
   submitButton.addEventListener('click', () => {
@@ -34,10 +38,61 @@ if (submitButton && inputField) {
 
       // Update the button text to show the current position in the array
       submitButton.textContent = `Submit (${currentIndex})`;
+
+      // Optionally, puoi richiamare fetchChatData qui se vuoi aggiornare le tabelle subito dopo un submit
+      if (currentIndex === 0) {
+        fetchChatData().then((opponentData) => {
+          console.log('Dati aggiornati dopo submit:', opponentData);
+        }).catch(error => {
+          console.error('Errore nel fetch della chat dopo submit:', error);
+        });
+      }
     }
   });
 } else {
   console.error("Submit button or input field is missing from the DOM.");
+}
+
+// Add event listener for reset button
+if (resetButton) {
+  resetButton.addEventListener('click', () => {
+    // Step 1: Reset the array and current index
+    stringArray.fill("");
+    currentIndex = 0;
+
+    // Reset filtered IDs
+    resetFilteredIds();
+
+    // Step 2: Reset the submit button text
+    if (submitButton) {
+      submitButton.textContent = `Submit (0)`;
+    }
+
+    // Step 3: Update the display of the table
+    updateTableDisplay();
+
+    // Step 4: Prompt user to re-enter allies' names
+    for (let i = 0; i < 8; i++) {
+      const allyName = prompt(`Inserisci il nome dell'alleato ${i + 1}:`);
+      if (allyName) {
+        stringArray[i] = allyName.trim();
+      }
+    }
+
+    // Step 5: Check if all allies were entered
+    if (stringArray.every(name => name !== "")) {
+      // Call fetchChatData after allies are populated
+      fetchChatData().then((opponentData) => {
+        console.log('Dati della chat aggiornati dopo il reset:', opponentData);
+      }).catch(error => {
+        console.error('Errore nel fetch dei dati della chat dopo il reset:', error);
+      });
+    } else {
+      console.error('Non sono stati inseriti tutti gli 8 alleati.');
+    }
+  });
+} else {
+  console.error("Reset button is missing from the DOM.");
 }
 
 // Initial display update

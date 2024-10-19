@@ -32,7 +32,7 @@ export async function initializeMap(): Promise<L.Map> {
   console.log('Creazione di una nuova istanza della mappa...');
   mapInstance = L.map(mapInnerContainer!, {
     crs: L.CRS.Simple,
-    minZoom: -6,
+    minZoom: -8,
     maxZoom: 1,
     zoomSnap: 0.2,
     zoomDelta: 0.2,

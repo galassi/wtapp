@@ -18,6 +18,7 @@
   width: 50vw;
   position: relative;
 }
+
 #control-buttons {
   position: absolute;
   top: 10px;
@@ -45,6 +46,7 @@
 #control-buttons button:hover, #toggle-buttons button:hover {
   background-color: #0056b3;
 }
+
 #info-box {
   position: absolute;
   top: 50px;
@@ -75,6 +77,26 @@ td {
   text-align: center;
 }
 
+/* Flexbox container for ONLINE and OFFLINE tables side by side */
+#tables-wrapper {
+  display: flex;
+  gap: 20px; /* Spazio tra le due tabelle */
+  justify-content: space-between;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-header {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
 /* Positioning the tables and elements on the right */
 #tables-container {
   position: absolute;
@@ -83,13 +105,6 @@ td {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* Style for table headers */
-.table-header {
-  margin-top: 20px;
-  font-size: 16px;
-  text-align: center;
 }
 
 /* Text input and submit button, positioned above the numbered buttons */
@@ -157,4 +172,10 @@ td {
 #table3 {
   background-color: white;
   border: 1px solid #ccc;
+}
+
+/* Ensure third table has some spacing and proper alignment */
+#table3 td {
+  padding: 10px;
+  text-align: center;
 }
