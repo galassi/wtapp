@@ -1,14 +1,26 @@
+import { populateTable, clearTableContent } from './chattable'; // Assicurati che queste funzioni siano correttamente importate
+
 export let stringArray: string[] = new Array(8).fill("");
 let currentIndex: number = 0;
 
 // Function to update the display of the third table based on the array
 function updateTableDisplay(): void {
-  stringArray.forEach((value: string, index: number) => {
-    const cell = document.querySelector(`#table3 tr:nth-child(${index + 1}) td`) as HTMLTableCellElement | null;
-    if (cell) {
-      cell.textContent = value;
-    }
-  });
+  const table = document.querySelector('#table3') as HTMLTableElement | null;
+
+  if (table) {
+    // Pulisce la tabella prima di aggiornarla
+    clearTableContent(table);
+
+    // Aggiorna la tabella con i nuovi dati da stringArray
+    stringArray.forEach((value: string, index: number) => {
+      const cell = table.rows[index]?.cells[0];
+      if (cell) {
+        cell.textContent = value;
+      }
+    });
+  } else {
+    console.error('Tabella #table3 non trovata.');
+  }
 }
 
 // Get elements and ensure they are of the correct type
@@ -111,5 +123,5 @@ if (resetButton) {
   console.error("Reset button is missing from the DOM.");
 }
 
-// Initial display update
+// Aggiorna la visualizzazione della tabella all'inizio
 updateTableDisplay();

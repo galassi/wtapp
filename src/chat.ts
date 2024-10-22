@@ -191,7 +191,7 @@ export function resetFilteredIds() {
 }
 
 // Function to update player tables
-function updatePlayerTables(opponentData: OpponentData[]): void {
+export function updatePlayerTables(opponentData: OpponentData[]): void {
   const aliveAllies = new Set<string>();  
   const aliveEnemies = new Set<string>(); 
   const offlineAllies = new Set<string>();
@@ -204,13 +204,11 @@ function updatePlayerTables(opponentData: OpponentData[]): void {
       const { allyOnline, allyPrint } = data.allyInfo;
 
       if (!allyOnline) {
-        // Se l'alleato è offline (distrutto), spostalo dalla lista degli online a quella degli offline
         aliveAllies.delete(allyPrint);  // Rimuovi dagli online
         offlineAllies.add(allyPrint);   // Aggiungi agli offline
       } else {
-        // Se l'alleato è vivo, aggiungilo agli online
         aliveAllies.add(allyPrint);  // Aggiungi agli online
-        offlineAllies.delete(allyPrint); // Per sicurezza, rimuovi dagli offline
+        offlineAllies.delete(allyPrint); // Rimuovi dagli offline
       }
     }
 
@@ -219,13 +217,11 @@ function updatePlayerTables(opponentData: OpponentData[]): void {
       const { enemyOnline, enemyPrint } = data.enemyInfo;
 
       if (!enemyOnline) {
-        // Se il nemico è offline (distrutto), spostalo dalla lista degli online a quella degli offline
         aliveEnemies.delete(enemyPrint);  // Rimuovi dagli online
         offlineEnemies.add(enemyPrint);   // Aggiungi agli offline
       } else {
-        // Se il nemico è vivo, aggiungilo agli online
         aliveEnemies.add(enemyPrint);  // Aggiungi agli online
-        offlineEnemies.delete(enemyPrint);  // Per sicurezza, rimuovi dagli offline
+        offlineEnemies.delete(enemyPrint);  // Rimuovi dagli offline
       }
     }
   });
@@ -233,6 +229,15 @@ function updatePlayerTables(opponentData: OpponentData[]): void {
   // Popola le tabelle: nessun alleato o nemico viene duplicato
   populateTable('table1', Array.from(aliveAllies), Array.from(aliveEnemies));
   populateTable('table2', Array.from(offlineAllies), Array.from(offlineEnemies));
+
+  // Unisce i nemici vivi e offline
+  const allEnemies = Array.from(new Set([...aliveEnemies, ...offlineEnemies]));
+  console.log("Nemici vivi:", aliveEnemies);
+  console.log("Nemici offline:", offlineEnemies);
+  console.log("Tutti i nemici (uniti):", allEnemies);
+
+  // Popola la table3 con i nemici
+  populateTable('table3', [], allEnemies); // Solo nemici
 }
 
 

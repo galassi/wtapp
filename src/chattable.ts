@@ -1,8 +1,12 @@
 // Helper function per pulire il contenuto di una tabella
 export function clearTableContent(table: HTMLTableElement): void {
   for (let row of table.rows) {
-    row.cells[0].textContent = ""; // Reset colonna sinistra (alleati)
-    row.cells[1].textContent = ""; // Reset colonna destra (nemici)
+    if (row.cells.length > 0) {
+      row.cells[0].textContent = ""; // Reset colonna sinistra (alleati o nemici)
+    }
+    if (row.cells.length > 1) {
+      row.cells[1].textContent = ""; // Reset colonna destra (opzionale, se ci sono due colonne)
+    }
   }
 }
 
@@ -15,23 +19,37 @@ export function populateTable(tableId: string, allies: string[], enemies: string
     return;
   }
 
-  // Reset del contenuto della tabella
+  // Pulisce la tabella prima di aggiornarla
   clearTableContent(table);
 
-  // Controlla se ci sono righe sufficienti nella tabella
+  console.log(`Popolazione della tabella con ID: ${tableId}`);
+  console.log("Alleati:", allies);
+  console.log("Nemici:", enemies);
+
   const rows = table.rows.length;
 
-  // Popola la colonna di sinistra con gli alleati
-  allies.forEach((ally, index) => {
-      if (index < rows) {
-          table.rows[index].cells[0].textContent = ally; // Popola la colonna sinistra (alleati)
+  // Logica specifica per la tabella "table3"
+  if (tableId === 'table3') {
+    // Popola solo con i nemici nella colonna sinistra
+    enemies.forEach((enemy, index) => {
+      if (index < rows && table.rows[index].cells.length > 0) {
+        table.rows[index].cells[0].textContent = enemy; // Popola la colonna sinistra con i nemici
       }
-  });
+    });
+  } else {
+    // Popola la colonna di sinistra con gli alleati, se esistono
+    allies.forEach((ally, index) => {
+      if (index < rows && table.rows[index].cells.length > 0) {
+        table.rows[index].cells[0].textContent = ally; // Popola la colonna sinistra (alleati)
+      }
+    });
 
-  // Popola la colonna di destra con i nemici
-  enemies.forEach((enemy, index) => {
-      if (index < rows) {
-          table.rows[index].cells[1].textContent = enemy; // Popola la colonna destra (nemici)
+    // Popola la colonna di destra con i nemici
+    enemies.forEach((enemy, index) => {
+      if (index < rows && table.rows[index].cells.length > 1) {
+        table.rows[index].cells[1].textContent = enemy; // Popola la colonna destra (nemici)
       }
-  });
+    });
+  }
 }
+
