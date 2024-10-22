@@ -13,131 +13,175 @@ type ChatEntry = {
 };
 
 type OpponentData = {
-  allyDestroyed: boolean;
   allyInfo?: {
-    ally: string;
-    allyVehicle: string;
+    allyOnline: boolean;
+    allyName: string;
+    allyPrint: string;
     action: string;
   } | null;
-  opponent?: string | null;
-  opponentVehicle?: string | null;
-  target?: string | null;
-  targetVehicle?: string | null;
+  enemyInfo?: {
+    enemyOnline: boolean;
+    enemyName: string;
+    enemyPrint: string;
+    action: string;
+  } | null;
   time: number;
-  event?: string;
-  vehicle?: string; 
 };
 
 // Variabili per il fetch della chat
 let filteredIds: Set<number> = new Set<number>();
 let filteredTimes: number[] = [];
-const keywordFilters = [
-  "pesantemente danneggiato",
-  "schiantato",
-  "ha abbattuto",
-  "gravemente danneggiato",
-  "ha mandato in fiamme",
-  "ha distrutto"
-];
+
 
 let currentId = 0; // ID attuale
 
-// Funzione per estrarre i dati degli avversari
-const extractOpponentData = (damageLog: ChatEntry[], allies: string[]): OpponentData[] => {
+// Funzione per estrarre nome, veicolo e prefisso dall'entry.msg
+const manualSplit = (message: string, keywordFound: string) => {
+  const parts = message.split(` ${keywordFound} `); // Usa la parola chiave per dividere il messaggio
+  if (parts.length === 2) {
+    const attackerPart = parts[0];
+    const targetPart = parts[1];
+    
+    // Estrai il prefisso, il nome e il veicolo dell'attaccante
+    const attackerPrefix = attackerPart.split(" ")[0];  // Il prefisso è la prima parte
+    const attackerName = attackerPart.split(" ")[1];    // Il nome è la seconda parte
+    const attackerVehicle = attackerPart.split("(")[1].split(")")[0]; // Estrai il veicolo
+    
+    // Estrai il prefisso, il nome e il veicolo del bersaglio
+    const targetPrefix = targetPart.split(" ")[0];      // Il prefisso è la prima parte
+    const targetName = targetPart.split(" ")[1];        // Il nome è la seconda parte
+    const targetVehicle = targetPart.split("(")[1].split(")")[0]; // Estrai il veicolo
+    
+    return {
+      attackerPrefix,
+      attackerName,
+      attackerVehicle,
+      targetPrefix,
+      targetName,
+      targetVehicle,
+    };
+  }
+  return null;
+};
+
+// Nuova lista di parole chiave, includendo "ha abbattuto"
+const keywordFilters = [
+  "ha distrutto",
+  "ha abbattuto",
+  "pesantemente danneggiato",
+  "gravemente danneggiato",
+  "ha mandato in fiamme"
+];
+
+// Funzione per processare ciascuna voce del damage log
+const extractOpponentData = (damageLog: ChatEntry[], stringArray: string[]): OpponentData[] => {
   let opponentData: OpponentData[] = [];
 
   damageLog.forEach(entry => {
     if (!filteredIds.has(entry.id)) {
-      const containsKeyword = keywordFilters.some(keyword => entry.msg.includes(keyword));
+      // Trova la prima parola chiave presente nel messaggio
+      const keywordFound = keywordFilters.find(keyword => entry.msg.includes(keyword));
 
-      if (containsKeyword) {
+      if (keywordFound) {
         filteredIds.add(entry.id);
         filteredTimes.push(entry.time);
 
-        let regex, match;
+        // Usa la funzione manualSplit invece della regex, passa la keyword trovata
+        const result = manualSplit(entry.msg, keywordFound);
+        
+        if (result) {
+          const { 
+            attackerPrefix, attackerName, attackerVehicle, 
+            targetPrefix, targetName, targetVehicle 
+          } = result;
 
-        // Caso 1: Gravemente danneggiato
-        regex = /([^\s()]+) \([^\)]+\) gravemente danneggiato .*? ([^\s()]+) \([^\)]+\)/;
-        match = entry.msg.match(regex);
+          // Verifica se l'attaccante è un alleato
+          const isAllyAttacker = stringArray.includes(attackerName);
+          // Verifica se il bersaglio è un alleato
+          const isAllyTarget = stringArray.includes(targetName);
 
-        if (match) {
-          const attacker = match[1]; // Alleato o nemico che ha attaccato
-          const target = match[2];   // Chi è stato attaccato
+          let allyInfo: {
+            allyOnline: boolean;
+            allyName: string;
+            allyPrint: string;
+            action: string;
+          } | null = null;
 
-          const isAllyAttacker = allies.includes(attacker);
-          const isAllyTarget = allies.includes(target);
+          let enemyInfo: {
+            enemyOnline: boolean;
+            enemyName: string;
+            enemyPrint: string;
+            action: string;
+          } | null = null;
 
-          // Se l'attaccante è un alleato, lo segniamo come vivo
-          if (isAllyAttacker) {
-            opponentData.push({
-              allyDestroyed: false,
-              allyInfo: { ally: attacker, allyVehicle: "", action: 'gravemente danneggiato' },
-              opponent: target,  // Il target è il nemico
-              opponentVehicle: "",
-              target: target,
-              targetVehicle: "",
-              time: entry.time,
-              event: 'gravemente danneggiato'
-            });
-          }
-
-          // Se il target è un alleato, lo segniamo come vivo
-          if (isAllyTarget) {
-            opponentData.push({
-              allyDestroyed: false, // L'alleato è solo danneggiato, non distrutto
-              allyInfo: { ally: target, allyVehicle: "", action: 'gravemente danneggiato' },
-              opponent: attacker,  // L'attaccante è il nemico
-              opponentVehicle: "",
-              target: target,
-              targetVehicle: "",
-              time: entry.time,
-              event: 'gravemente danneggiato'
-            });
-          }
-        }
-
-        // Caso 2: Ha distrutto
-        regex = /([^\s()]+) \([^\)]+\) ha distrutto .*? ([^\s()]+) \([^\)]+\)/;
-        match = entry.msg.match(regex);
-
-        if (match) {
-          const attacker = match[1]; // Alleato o nemico che ha attaccato
-          const target = match[2];   // Chi è stato distrutto
-
-          const isAllyTarget = allies.includes(target);
-
-          // Se il target è un alleato, segna che è stato distrutto
-          if (isAllyTarget) {
-            opponentData.push({
-              allyDestroyed: true,  // Il target è un alleato distrutto
-              allyInfo: { ally: target, allyVehicle: "", action: 'distrutto' },
-              opponent: null,
-              opponentVehicle: null,
-              target: target,
-              targetVehicle: "",
-              time: entry.time,
-              event: 'distrutto'
-            });
+          // Controlla quale parola chiave è stata trovata
+          if (keywordFound === 'ha distrutto' || keywordFound === 'ha abbattuto') {
+            // Se il bersaglio è un alleato, è stato distrutto o abbattuto (offline)
+            if (isAllyTarget) {
+              allyInfo = {
+                allyOnline: false,  // L'alleato è morto
+                allyName: targetName,
+                allyPrint: `${targetPrefix} ${targetName} (${targetVehicle})`, // Include il prefisso
+                action: keywordFound,
+              };
+              enemyInfo = {
+                enemyOnline: true,  // Il nemico (attaccante) è vivo
+                enemyName: attackerName,
+                enemyPrint: `${attackerPrefix} ${attackerName} (${attackerVehicle})`, // Include il prefisso
+                action: keywordFound,
+              };
+            } else {
+              // Se il bersaglio è un nemico, è stato distrutto o abbattuto
+              enemyInfo = {
+                enemyOnline: false,  // Il nemico è morto
+                enemyName: targetName,
+                enemyPrint: `${targetPrefix} ${targetName} (${targetVehicle})`,  // Include il prefisso
+                action: keywordFound,
+              };
+              allyInfo = {
+                allyOnline: true,  // L'alleato (attaccante) è vivo
+                allyName: attackerName,
+                allyPrint: `${attackerPrefix} ${attackerName} (${attackerVehicle})`,  // Include il prefisso
+                action: keywordFound,
+              };
+            }
           } else {
-            // Se il target non è un alleato, è il nemico che è stato distrutto
-            opponentData.push({
-              allyDestroyed: false,
-              allyInfo: null,
-              opponent: target,  // Il nemico è stato distrutto
-              opponentVehicle: "",
-              target: target,
-              targetVehicle: "",
-              time: entry.time,
-              event: 'distrutto'
-            });
+            // Per le altre parole chiave (danneggiato, in fiamme), entrambi rimangono online
+            allyInfo = {
+              allyOnline: true,
+              allyName: isAllyTarget ? targetName : attackerName,
+              allyPrint: isAllyTarget 
+                ? `${targetPrefix} ${targetName} (${targetVehicle})`
+                : `${attackerPrefix} ${attackerName} (${attackerVehicle})`,
+              action: keywordFound,
+            };
+            enemyInfo = {
+              enemyOnline: true,
+              enemyName: isAllyTarget ? attackerName : targetName,
+              enemyPrint: isAllyTarget
+                ? `${attackerPrefix} ${attackerName} (${attackerVehicle})`
+                : `${targetPrefix} ${targetName} (${targetVehicle})`,
+              action: keywordFound,
+            };
           }
+
+          // Aggiungi i dati raccolti in opponentData
+          opponentData.push({
+            allyInfo: allyInfo,
+            enemyInfo: enemyInfo,
+            time: entry.time
+          });
+        } else {
+          console.log("Formato del messaggio non valido:", entry.msg);
         }
       }
     }
   });
-
+  console.log(opponentData);
   return opponentData;
 };
+
+
 
 // Funzione per resettare filteredIds
 export function resetFilteredIds() {
@@ -146,54 +190,57 @@ export function resetFilteredIds() {
   currentId = 0;
 }
 
-// Funzione per aggiornare le tabelle dei giocatori
-function updatePlayerTables(opponentData: OpponentData[], allies: string[]): void {
-  // Set per evitare duplicati
-  const aliveAllies = new Set<string>();
-  const aliveEnemies = new Set<string>();
+// Function to update player tables
+function updatePlayerTables(opponentData: OpponentData[]): void {
+  const aliveAllies = new Set<string>();  
+  const aliveEnemies = new Set<string>(); 
   const offlineAllies = new Set<string>();
   const offlineEnemies = new Set<string>();
 
-  // Inizializza gli alleati come vivi
-  allies.forEach(ally => {
-    aliveAllies.add(ally);
-  });
-
+  // Process opponent data
   opponentData.forEach(data => {
-    // Se un alleato è stato distrutto
-    if (data.allyInfo && data.allyDestroyed) {
-      aliveAllies.delete(data.allyInfo.ally);
-      offlineAllies.add(data.allyInfo.ally);
+    // Handle allies
+    if (data.allyInfo) {
+      const { allyOnline, allyPrint } = data.allyInfo;
+
+      if (!allyOnline) {
+        // Se l'alleato è offline (distrutto), spostalo dalla lista degli online a quella degli offline
+        aliveAllies.delete(allyPrint);  // Rimuovi dagli online
+        offlineAllies.add(allyPrint);   // Aggiungi agli offline
+      } else {
+        // Se l'alleato è vivo, aggiungilo agli online
+        aliveAllies.add(allyPrint);  // Aggiungi agli online
+        offlineAllies.delete(allyPrint); // Per sicurezza, rimuovi dagli offline
+      }
     }
 
-    // Gestione dei nemici
-    if (data.opponent) {
-      if (data.event === 'distrutto' || data.event === 'schiantato') {
-        aliveEnemies.delete(data.opponent);
-        offlineEnemies.add(data.opponent);
+    // Handle enemies
+    if (data.enemyInfo) {
+      const { enemyOnline, enemyPrint } = data.enemyInfo;
+
+      if (!enemyOnline) {
+        // Se il nemico è offline (distrutto), spostalo dalla lista degli online a quella degli offline
+        aliveEnemies.delete(enemyPrint);  // Rimuovi dagli online
+        offlineEnemies.add(enemyPrint);   // Aggiungi agli offline
       } else {
-        // Se il nemico non è già stato registrato come offline
-        if (!offlineEnemies.has(data.opponent)) {
-          aliveEnemies.add(data.opponent);
-        }
+        // Se il nemico è vivo, aggiungilo agli online
+        aliveEnemies.add(enemyPrint);  // Aggiungi agli online
+        offlineEnemies.delete(enemyPrint);  // Per sicurezza, rimuovi dagli offline
       }
     }
   });
 
-  // Popola la tabella ONLINE (vivi) - Colonna sinistra: alleati, destra: nemici
+  // Popola le tabelle: nessun alleato o nemico viene duplicato
   populateTable('table1', Array.from(aliveAllies), Array.from(aliveEnemies));
-
-  // Popola la tabella OFFLINE (distrutti) - Colonna sinistra: alleati, destra: nemici
   populateTable('table2', Array.from(offlineAllies), Array.from(offlineEnemies));
 }
 
+
+
+
+
 // Funzione per aggiornare la visualizzazione delle tabelle
 export async function fetchChatData(): Promise<OpponentData[]> {
-  if (isChatDataFetched) {
-    return []; // Evita di rifare il fetch
-  }
-  isChatDataFetched = true;
-
   try {
     const response = await fetch('/file/hudmsg.json');
     
@@ -208,7 +255,7 @@ export async function fetchChatData(): Promise<OpponentData[]> {
       const opponentData = extractOpponentData(chatInfo.damage, stringArray);
       
       // Aggiorna le tabelle con i nuovi dati
-      updatePlayerTables(opponentData, stringArray);
+      updatePlayerTables(opponentData);
 
       return opponentData;
     }

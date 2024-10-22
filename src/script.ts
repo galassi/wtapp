@@ -19,38 +19,54 @@ const resetButton = document.querySelector('#reset-button') as HTMLButtonElement
 // Import fetchChatData and resetFilteredIds from chat.ts
 import { fetchChatData, resetFilteredIds } from './chat';
 
-if (submitButton && inputField) {
-  submitButton.addEventListener('click', () => {
-    const inputValue: string = inputField.value.trim();
+// Function to handle form submission
+function handleSubmit() {
+  const inputValue: string = inputField?.value.trim() ?? "";
 
-    if (inputValue !== "") {
-      // Add input value to the array
-      stringArray[currentIndex] = inputValue;
+  if (inputValue !== "") {
+    // Add input value to the array
+    stringArray[currentIndex] = inputValue;
 
-      // Update the display of the table
-      updateTableDisplay();
+    // Update the display of the table
+    updateTableDisplay();
 
-      // Clear the input field
-      inputField.value = "";
+    // Clear the input field
+    if (inputField) inputField.value = "";
 
-      // Move to the next index, wrapping around when needed
-      currentIndex = (currentIndex + 1) % stringArray.length;
+    // Move to the next index, wrapping around when needed
+    currentIndex = (currentIndex + 1) % stringArray.length;
 
-      // Update the button text to show the current position in the array
-      submitButton.textContent = `Submit (${currentIndex})`;
+    // Update the button text to show the current position in the array
+    if (submitButton) submitButton.textContent = `Submit (${currentIndex})`;
 
-      // Optionally, puoi richiamare fetchChatData qui se vuoi aggiornare le tabelle subito dopo un submit
-      if (currentIndex === 0) {
-        fetchChatData().then((opponentData) => {
-          console.log('Dati aggiornati dopo submit:', opponentData);
-        }).catch(error => {
-          console.error('Errore nel fetch della chat dopo submit:', error);
-        });
-      }
+    // Optionally, fetch new chat data when all allies are entered
+    if (currentIndex === 0) {
+      fetchChatData().then((opponentData) => {
+        console.log('Dati aggiornati dopo submit:', opponentData);
+      }).catch(error => {
+        console.error('Errore nel fetch della chat dopo submit:', error);
+      });
+    }
+  }
+}
+
+// Add click event listener to the submit button
+if (submitButton) {
+  submitButton.addEventListener('click', handleSubmit);
+} else {
+  console.error("Submit button is missing from the DOM.");
+}
+
+// Add keydown event listener to the input field for "Enter" key
+if (inputField) {
+  inputField.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevents the form from submitting if it's inside a form tag
+      handleSubmit();
     }
   });
 } else {
-  console.error("Submit button or input field is missing from the DOM.");
+  console.error("Input field is missing from the DOM.");
 }
 
 // Add event listener for reset button

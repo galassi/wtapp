@@ -121,6 +121,30 @@
                   "enemy": false,
                   "mode": "",
                   "time": 160
+            },           
+            {
+                  "id": 16,
+                  "msg": "=CLAN= otto (Carro1) ha distrutto SBAM sedici (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 180
+            },           
+            {
+                  "id": 17,
+                  "msg": "=CLAN= sette (Carro1) ha distrutto SBAM diciasette (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 200
+            },                             
+            {
+                  "id": 18,
+                  "msg": "=CLAN= sette (Carro1) ha distrutto SBAM diciotto (Z-9WA)",
+                  "sender": "",
+                  "enemy": false,
+                  "mode": "",
+                  "time": 220
             }
       ]
 
