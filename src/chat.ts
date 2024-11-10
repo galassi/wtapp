@@ -232,10 +232,6 @@ export function updatePlayerTables(opponentData: OpponentData[]): void {
 
   // Unisce i nemici vivi e offline
   const allEnemies = Array.from(new Set([...aliveEnemies, ...offlineEnemies]));
-  console.log("Nemici vivi:", aliveEnemies);
-  console.log("Nemici offline:", offlineEnemies);
-  console.log("Tutti i nemici (uniti):", allEnemies);
-
   // Popola la table3 con i nemici
   populateTable('table3', [], allEnemies); // Solo nemici
 }
@@ -247,7 +243,7 @@ export function updatePlayerTables(opponentData: OpponentData[]): void {
 // Funzione per aggiornare la visualizzazione delle tabelle
 export async function fetchChatData(): Promise<OpponentData[]> {
   try {
-    const response = await fetch('/file/hudmsg.json');
+    const response = await fetch('http://localhost:8111/hudmsg?lastEvt=0&lastDmg=0');
     
     if (!response.ok) {
       throw new Error('Errore nella rete: ' + response.statusText);
